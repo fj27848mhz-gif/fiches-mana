@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rappel MSG — Questions de récupération active · v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Palette MSG (identique à Fiche_MSG.html) */
+  --bg:#0f0f12;
+  --bg2:#13131a;
+  --surface:#18181f;
+  --surface2:#1e1e28;
+  --card:#1e1e28;
+  --card2:#222834;
+  --ink:#e8e6f0;
+  --ink-soft:#b3b9c6;
+  --ink-dim:#9896a8;
+  --line:#2a2a38;
+  --line-soft:#22222e;
+
+  /* Couleurs par type de question */
+  --rest:#a78bfa;       /* restitution = violet (def) */
+  --rest-bg:rgba(167,139,250,.10);
+  --rest-line:rgba(167,139,250,.32);
+
+  --mec:#4ecdc4;        /* mécanisme = turquoise (met) */
+  --mec-bg:rgba(78,205,196,.10);
+  --mec-line:rgba(78,205,196,.32);
+
+  --disc:#ffd166;       /* discrimination = ambre (piege) */
+  --disc-bg:rgba(255,209,102,.10);
+  --disc-line:rgba(255,209,102,.32);
+
+  --app:#60a5fa;        /* application = bleu */
+  --app-bg:rgba(96,165,250,.10);
+  --app-line:rgba(96,165,250,.32);
+
+  --aut:#ff6b8a;        /* auteur = rose */
+  --aut-bg:rgba(255,107,138,.10);
+  --aut-line:rgba(255,107,138,.32);
+
+  /* États */
+  --ok:#34d399;
+  --ok-bg:rgba(52,211,153,.13);
+  --ok-line:rgba(52,211,153,.4);
+  --revoir:#f87171;
+  --revoir-bg:rgba(248,113,113,.13);
+  --revoir-line:rgba(248,113,113,.4);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:
+    radial-gradient(1100px 560px at 82% -8%, rgba(108,99,255,.07), transparent 60%),
+    radial-gradient(900px 480px at -8% 18%, rgba(78,205,196,.05), transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font-family:'Source Sans 3',system-ui,sans-serif;
+  font-size:15.5px;line-height:1.62;
+  padding:0 0 120px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px;}
+
+header.top{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(108,99,255,.06),transparent);
+  padding:46px 0 28px;margin-bottom:28px;
+}
+header.top .wrap{display:flex;flex-direction:column;gap:13px;}
+.kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--mec);
+}
+h1.title{
+  font-family:'Playfair Display',serif;
+  font-size:42px;line-height:1.06;font-weight:800;letter-spacing:-.5px;
+}
+h1.title em{font-style:italic;color:var(--rest);}
+.subtitle{color:var(--ink-soft);max-width:660px;font-size:15px;}
+.meta-row{
+  display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+}
+.meta-row span{
+  border:1px solid var(--line);border-radius:999px;
+  padding:4px 11px;color:var(--ink-dim);
+}
+.meta-row span b{color:var(--ink-soft);font-weight:600;}
+
+/* Scoreboard */
+.score{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:18px 20px;margin-bottom:18px;
+}
+.score h2{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.18em;
+  margin-bottom:14px;font-weight:600;
+}
+.score-cnt{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;}
+.score-cnt > div{display:flex;align-items:center;gap:7px;}
+.score-cnt .dot{width:10px;height:10px;border-radius:50%;}
+.score-cnt .dot.ok{background:var(--ok);}
+.score-cnt .dot.rev{background:var(--revoir);}
+.score-cnt .dot.rest{background:var(--ink-dim);}
+.score-cnt b{color:var(--ink);font-weight:700;}
+.pf{
+  height:6px;background:var(--surface2);border-radius:999px;overflow:hidden;
+  margin-top:14px;display:flex;
+}
+.pf-su{background:var(--ok);height:100%;transition:width .25s;}
+.pf-rev{background:var(--revoir);height:100%;transition:width .25s;}
+
+/* Filtres */
+.filters{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;
+}
+.chip{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  background:var(--surface);border:1px solid var(--line);
+  color:var(--ink-soft);padding:7px 14px;border-radius:8px;
+  cursor:pointer;transition:all .15s;
+}
+.chip:hover{background:var(--surface2);color:var(--ink);}
+.chip.active{background:var(--mec-bg);border-color:var(--mec);color:var(--mec);font-weight:600;}
+.reset-btn{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  background:transparent;border:1px solid var(--revoir-line);
+  color:var(--revoir);padding:7px 14px;border-radius:8px;
+  cursor:pointer;transition:all .15s;margin-left:auto;
+}
+.reset-btn:hover{background:var(--revoir-bg);}
+
+/* Groupes par chapitre */
+.chap-group{margin-bottom:32px;}
+.chap-group h3{
+  font-family:'Playfair Display',serif;
+  font-size:20px;color:var(--ink);
+  margin-bottom:6px;padding:14px 0 8px;
+  border-bottom:1px solid var(--line);font-weight:700;
+}
+.chap-group .cm{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.12em;
+  margin-bottom:14px;
+}
+
+/* Cartes de questions */
+.qcard{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:18px 20px;margin-bottom:14px;
+  transition:border-color .15s;
+}
+.qcard.is-su{border-color:var(--ok-line);background:var(--ok-bg);}
+.qcard.is-rev{border-color:var(--revoir-line);background:var(--revoir-bg);}
+.qcard .qh{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px;}
+.qcard .kind-tag{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:.10em;text-transform:uppercase;
+  padding:3px 9px;border-radius:5px;font-weight:600;flex-shrink:0;
+  margin-top:2px;
+}
+.kind-tag.restitution{background:var(--rest-bg);color:var(--rest);border:1px solid var(--rest-line);}
+.kind-tag.mecanisme{background:var(--mec-bg);color:var(--mec);border:1px solid var(--mec-line);}
+.kind-tag.discrimination{background:var(--disc-bg);color:var(--disc);border:1px solid var(--disc-line);}
+.kind-tag.application{background:var(--app-bg);color:var(--app);border:1px solid var(--app-line);}
+.kind-tag.auteur{background:var(--aut-bg);color:var(--aut);border:1px solid var(--aut-line);}
+.qcard .q{font-size:15.5px;color:var(--ink);font-weight:500;line-height:1.55;}
+.qcard .qmeta{margin-top:8px;font-size:12px;color:var(--ink-dim);font-family:'JetBrains Mono',monospace;}
+
+/* Réponse */
+.answer{
+  display:none;margin-top:14px;padding:14px 16px;
+  background:var(--surface2);border:1px solid var(--line-soft);
+  border-radius:10px;
+}
+.qcard.open .answer{display:block;}
+.answer p,.answer li{color:var(--ink-soft);font-size:14.5px;line-height:1.65;margin:5px 0;}
+.answer ul,.answer ol{padding-left:22px;margin:6px 0;}
+.answer strong{color:var(--ink);}
+.answer .term{color:var(--rest);font-weight:600;}
+.answer ol.steps{counter-reset:step;list-style:none;padding-left:0;}
+.answer ol.steps > li{
+  position:relative;padding-left:34px;margin-bottom:8px;
+  counter-increment:step;
+}
+.answer ol.steps > li::before{
+  content:counter(step);position:absolute;left:0;top:0;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  background:var(--mec-bg);color:var(--mec);border:1px solid var(--mec-line);
+  width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;
+}
+.answer .ref{
+  margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-dim);
+}
+.answer .ref a{color:var(--mec);text-decoration:none;}
+.answer .ref a:hover{text-decoration:underline;}
+
+/* Boutons */
+.qcard .actions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap;}
+.se-btn{
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;
+  padding:6px 13px;border-radius:7px;cursor:pointer;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);
+  transition:all .15s;
+}
+.se-btn.show{flex:1;min-width:120px;max-width:200px;}
+.se-btn.show:hover{background:var(--surface2);color:var(--ink);border-color:var(--ink-soft);}
+.se-btn.su{color:var(--ok);border-color:var(--ok-line);}
+.se-btn.su:hover,.se-btn.su.active{background:var(--ok-bg);color:var(--ok);}
+.se-btn.rev{color:var(--revoir);border-color:var(--revoir-line);}
+.se-btn.rev:hover,.se-btn.rev.active{background:var(--revoir-bg);color:var(--revoir);}
+.se-state{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);margin-left:auto;align-self:center;}
+
+/* Empty message */
+#empty-msg{
+  display:none;text-align:center;color:var(--ink-dim);
+  padding:40px 20px;font-style:italic;
+}
+
+footer{
+  margin-top:60px;padding:24px 0;border-top:1px solid var(--line);
+  font-size:12px;color:var(--ink-dim);
+}
+footer code{font-family:'JetBrains Mono',monospace;color:var(--ink-soft);}
+footer p{margin:5px 0;}
+
+@media (max-width:560px){
+  h1.title{font-size:32px;}
+  .qcard .actions{flex-direction:column;}
+  .se-btn.show{max-width:none;}
+}
+@media print{
+  body{background:#fff;color:#111;font-size:11px;}
+  .filters,.reset-btn,.actions{display:none;}
+  .qcard{background:#fafafa;border-color:#ddd;}
+  .answer{display:block!important;}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <span class="kicker">MSG · CPGE ECT1 · Mme Soler · Rappel v2</span>
+    <h1 class="title">Rappel <em>MSG</em> — récupération active</h1>
+    <p class="subtitle">Questions de récupération active basées sur la <strong>Fiche_MSG.html</strong> principale. 5 types de questions : restitution, mécanisme, discrimination, application, auteur. Score et progression en session uniquement (pas de localStorage).</p>
+    <div class="meta-row">
+      <span><b>v2</b> · 203 questions · couverture exhaustive</span>
+      <span id="qcount-meta">Questions <b>0</b></span>
+      <span>Dossiers <b>L · D1 → D7</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="score">
+    <h2>Progression de session</h2>
+    <div class="score-cnt">
+      <div><span class="dot ok"></span><span>Sues : <b id="st-su">0</b></span></div>
+      <div><span class="dot rev"></span><span>À revoir : <b id="st-rev">0</b></span></div>
+      <div><span class="dot rest"></span><span>Reste : <b id="st-rest">0</b></span></div>
+      <div style="margin-left:auto;"><span>Total : <b id="st-tot">0</b></span></div>
+    </div>
+    <div class="pf"><div id="pf-su" class="pf-su" style="width:0;"></div><div id="pf-rev" class="pf-rev" style="width:0;"></div></div>
+  </div>
+
+  <div class="filters">
+    <button class="chip active" data-filter="all">Tout</button>
+    <button class="chip" data-filter="rest">À reprendre</button>
+    <button class="chip" data-filter="rev">À revoir</button>
+    <button class="chip" data-filter="restitution">Restitution</button>
+    <button class="chip" data-filter="mecanisme">Mécanisme</button>
+    <button class="chip" data-filter="discrimination">Discrimination</button>
+    <button class="chip" data-filter="application">Application</button>
+    <button class="chip" data-filter="auteur">Auteur</button>
+    <button class="reset-btn" id="reset-btn">Reset session</button>
+  </div>
+
+  <div id="quiz-container"></div>
+  <div id="empty-msg">Aucune question ne correspond au filtre actif.</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><code>Rappel_MSG_v2.html</code> · Compagnon de <code>Fiche_MSG.html</code></p>
+    <p>État de session en mémoire uniquement (pas de localStorage). Recharger la page → tout réinitialisé.</p>
+  </div>
+</footer>
+
+<script>
+const QUESTIONS = [
+
+// ============================================================
+// LIMINAIRE
+// ============================================================
+{chap:"Liminaire — Verbes d'action", cmeta:"m-verbes + b2", kind:"restitution",
+q:"Que veut dire <strong>« qualifier »</strong> dans un verbe d'action ?",
+a:"<p><strong>Qualifier</strong> = donner les caractéristiques essentielles d'un concept en mobilisant le vocabulaire technique de gestion. C'est différent de <em>définir</em> (donner le sens) et de <em>caractériser</em> (mettre en évidence les traits dominants).</p>",
+ref:"<a href='Fiche_MSG.html#m-verbes'>Fiche → Liminaire · Verbes d'action</a>"},
+
+{chap:"Liminaire — Verbes d'action", cmeta:"m-verbes + b2", kind:"discrimination",
+q:"Quelle est la différence entre <strong>« analyser »</strong> et <strong>« évaluer »</strong> ?",
+a:"<ul><li><strong>Analyser</strong> = décomposer pour mettre en évidence les éléments constitutifs / relations. Pas de jugement de valeur.</li><li><strong>Évaluer</strong> = porter un jugement (positif/négatif/nuancé) en mobilisant des critères. Implique une prise de position.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-verbes'>Fiche → Liminaire · Verbes d'action</a>"},
+
+{chap:"Liminaire — Verbes d'action", cmeta:"b2 : appliquer", kind:"application",
+q:"Si on te demande <strong>« justifier »</strong> dans un cas, que dois-tu faire ?",
+a:"<p><strong>Justifier</strong> = démontrer en mobilisant des arguments théoriques (auteur, méthode du cours) + des éléments du cas pratique. <em>Sans</em> arguments du cas → réponse incomplète. <em>Sans</em> théorie → tu fais du commentaire de doc, pas du management.</p>",
+ref:"<a href='Fiche_MSG.html#m-verbes'>Fiche → Liminaire · b2 — Verbes appliqués</a>"},
+
+{chap:"Liminaire — Règles méthodologiques", cmeta:"m-regles + b1", kind:"restitution",
+q:"Quelles sont les 7 étapes de la méthode d'étude de cas ?",
+a:"<ol class='steps'><li><strong>Lire le cas</strong> en repérant les acteurs, contexte, problématique.</li><li><strong>Souligner</strong> les informations utiles (chiffres, citations, dates).</li><li><strong>Reformuler</strong> la problématique en termes managériaux.</li><li><strong>Mobiliser</strong> les méthodes/théories pertinentes du cours.</li><li><strong>Construire</strong> une réponse argumentée (théorie + cas).</li><li><strong>Conclure</strong> de manière synthétique.</li><li><strong>Relire</strong> pour vérifier la cohérence.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b1'>Fiche → Liminaire · b1 — Étude de cas 7 étapes</a>"},
+
+{chap:"Liminaire — Règles méthodologiques", cmeta:"m-regles + b3", kind:"mecanisme",
+q:"Comment distinguer une <strong>idée principale</strong> d'une <strong>idée secondaire</strong> dans un cas ?",
+a:"<ul><li><strong>Idée principale (IP)</strong> = thèse centrale, généralisable, mobilisable comme argument. Sans elle, le raisonnement s'effondre.</li><li><strong>Idée secondaire (IS)</strong> = exemple, illustration, donnée chiffrée qui <em>vient appuyer</em> l'IP. Elle est <em>développée et exemplifiée</em>.</li></ul><p>→ Une IS sans IP = anecdote. Une IP sans IS = théorie creuse.</p>",
+ref:"<a href='Fiche_MSG.html#b3'>Fiche → Liminaire · b3 — Idées principales/secondaires</a>"},
+
+// ============================================================
+// D1 — INFORMATION
+// ============================================================
+{chap:"D1 — Information", cmeta:"m-qualite-d1 + b5", kind:"restitution",
+q:"Énonce les <strong>9 critères de qualité de l'information</strong>.",
+a:"<ol class='steps'><li><strong>Pertinence</strong> — utile pour la décision.</li><li><strong>Fiabilité</strong> — source crédible, traçable.</li><li><strong>Exactitude</strong> — données justes.</li><li><strong>Actualité / fraîcheur</strong> — récente, à jour.</li><li><strong>Accessibilité</strong> — facilement consultable.</li><li><strong>Compréhensibilité</strong> — claire pour le destinataire.</li><li><strong>Confidentialité</strong> — diffusion contrôlée.</li><li><strong>Intégrité</strong> — non altérée.</li><li><strong>Disponibilité</strong> — accessible au bon moment.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-qualite-d1'>Fiche → D1 · Qualité (9 critères)</a>"},
+
+{chap:"D1 — Information", cmeta:"m-acces", kind:"restitution",
+q:"Cite les <strong>3 grandes propriétés à garantir</strong> en sécurisation de l'information.",
+a:"<ul><li><strong>Disponibilité</strong> — accéder à l'info dont on a besoin quand on en a besoin.</li><li><strong>Intégrité</strong> — bénéficier d'une info non faussée.</li><li><strong>Confidentialité des données</strong> — protection contre les accès non autorisés.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-acces'>Fiche → D1 · Accéder à l'information</a>"},
+
+{chap:"D1 — Information", cmeta:"m-veille-d1 + b6", kind:"auteur",
+q:"Qui a défini la notion de <strong>signaux faibles</strong> ? Que sont-ils ?",
+a:"<p><strong>Igor Ansoff (1975)</strong>. Les <strong>signaux faibles</strong> sont des informations <em>fragmentaires, imprécises et précoces</em> sur des évolutions futures de l'environnement. Ils sont détectés en amont par la <strong>veille</strong> et permettent d'anticiper les ruptures stratégiques.</p>",
+ref:"<a href='Fiche_MSG.html#m-veille-d1'>Fiche → D1 · Veille (Ansoff)</a>"},
+
+{chap:"D1 — Information", cmeta:"m-veille-d1 + b6", kind:"mecanisme",
+q:"Déroule la <strong>méthode d'accès à l'information par la veille</strong>.",
+a:"<ol class='steps'><li><strong>Définir les besoins</strong> en information (objectifs, types de données).</li><li><strong>Identifier les sources</strong> internes et externes (primaires, secondaires).</li><li><strong>Collecter</strong> via la veille (concurrentielle, technologique, juridique…).</li><li><strong>Traiter et stocker</strong> dans un SI sécurisé.</li><li><strong>Diffuser</strong> aux décideurs au bon moment.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b6'>Fiche → D1 · b6</a>"},
+
+{chap:"D1 — Information", cmeta:"m-intelligence + b7", kind:"discrimination",
+q:"Quelles sont les <strong>4 formes d'intelligence</strong> en entreprise ?",
+a:"<ul><li><strong>Intelligence économique</strong> (Knorr) — collecter / traiter / distribuer l'info utile.</li><li><strong>Intelligence individuelle</strong> (Gardner, 8 intelligences multiples).</li><li><strong>Intelligence collective</strong> (Senge, Wenger — communautés de pratique).</li><li><strong>Intelligence artificielle</strong> (Deep Learning, IA générative…).</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-intelligence'>Fiche → D1 · Formes d'intelligence</a>"},
+
+{chap:"D1 — Information", cmeta:"m-int-eco", kind:"auteur",
+q:"Quelle est la définition de l'<strong>intelligence économique</strong> selon Knorr ?",
+a:"<p><strong>Knorr</strong> : « Opération permettant de <em>se procurer et de traiter l'information</em> relevant de l'environnement externe par laquelle une organisation tend à <em>maximiser l'atteinte de ses différents buts</em>. »</p>",
+ref:"<a href='Fiche_MSG.html#m-int-eco'>Fiche → D1 · Intelligence économique</a>"},
+
+{chap:"D1 — Information", cmeta:"m-int-eco", kind:"restitution",
+q:"Quelle est la définition de l'IE selon le <strong>Commissariat général du Plan</strong> ?",
+a:"<p><strong>Commissariat général du Plan</strong> : « Ensemble des <em>actions coordonnées de recherche, de traitement et de distribution</em>, en vue de son exploitation, de <em>l'information utile aux acteurs économiques</em>. »</p>",
+ref:"<a href='Fiche_MSG.html#m-int-eco'>Fiche → D1 · Intelligence économique</a>"},
+
+{chap:"D1 — Information", cmeta:"m-int-eco", kind:"restitution",
+q:"Quelle est la définition de la <strong>veille</strong> ?",
+a:"<p>Consiste à <strong>organiser la collecte d'informations</strong> souhaitées par l'entreprise : créer un réseau de relations, sélectionner les sources, mettre en place le traitement des informations.</p>",
+ref:"<a href='Fiche_MSG.html#m-int-eco'>Fiche → D1 · Définition Veille</a>"},
+
+{chap:"D1 — Information", cmeta:"m-int-individuelle", kind:"auteur",
+q:"Qui a théorisé les <strong>8 intelligences multiples</strong> ? Cite-en 4.",
+a:"<p><strong>Howard Gardner</strong>. 8 intelligences : <em>linguistique, logico-mathématique, spatiale, kinesthésique, musicale, interpersonnelle, intrapersonnelle, naturaliste</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-int-individuelle'>Fiche → D1 · Gardner</a>"},
+
+{chap:"D1 — Information", cmeta:"m-int-collective", kind:"auteur",
+q:"Que disent <strong>Senge</strong> et <strong>Wenger</strong> sur l'intelligence collective ?",
+a:"<ul><li><strong>Peter Senge</strong> — l'<strong>organisation apprenante</strong> : 5 disciplines (vision partagée, modèles mentaux, apprentissage en équipe, maîtrise personnelle, pensée systémique).</li><li><strong>Étienne Wenger</strong> — les <strong>communautés de pratique</strong> : groupes informels qui partagent un domaine d'expertise et apprennent ensemble.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-int-collective'>Fiche → D1 · Senge & Wenger</a>"},
+
+{chap:"D1 — Information", cmeta:"m-ia", kind:"discrimination",
+q:"Quelle est la différence entre <strong>IA faible</strong> et <strong>IA forte</strong> ?",
+a:"<ul><li><strong>IA faible</strong> = IA spécialisée sur une tâche (reconnaissance d'image, traduction, jeu d'échecs). C'est l'IA actuelle.</li><li><strong>IA forte</strong> = IA générale, capable de raisonner sur tout sujet comme un humain. Pas encore atteinte.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-ia'>Fiche → D1 · IA</a>"},
+
+{chap:"D1 — Information", cmeta:"m-achat + b11", kind:"application",
+q:"Comment <strong>qualifier un comportement d'achat</strong> dans un cas ?",
+a:"<ol class='steps'><li><strong>Type d'achat</strong> : réfléchi / impulsif / routinier / projeté.</li><li><strong>Niveau d'implication</strong> : fort / faible (modèle FCB).</li><li><strong>Phases du processus</strong> : besoin → recherche d'info → évaluation → achat → post-achat.</li><li><strong>Influences</strong> : individuelles (perso, psycho), sociales (famille, groupes de référence, culture).</li></ol>",
+ref:"<a href='Fiche_MSG.html#b11'>Fiche → D1 · b11</a>"},
+
+{chap:"D1 — Information", cmeta:"m-acteurs", kind:"restitution",
+q:"Cite les <strong>5 grands acteurs du marché</strong>.",
+a:"<ul><li><strong>Consommateurs / clients</strong> (B2C, B2B).</li><li><strong>Producteurs / offreurs</strong>.</li><li><strong>Distributeurs</strong>.</li><li><strong>Prescripteurs</strong> (influencent sans acheter : médecin, expert).</li><li><strong>Influenceurs</strong> (digital, opinion leaders).</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-acteurs'>Fiche → D1 · Acteurs</a>"},
+
+{chap:"D1 — Information", cmeta:"m-bigdata", kind:"restitution",
+q:"Quels sont les <strong>4 V du Big Data</strong> ?",
+a:"<ul><li><strong>Volume</strong> — quantité massive de données.</li><li><strong>Vélocité</strong> — vitesse de traitement (temps réel).</li><li><strong>Variété</strong> — formats hétérogènes (texte, image, vidéo, capteurs).</li><li><strong>Véracité</strong> — fiabilité, qualité des données.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-bigdata'>Fiche → D1 · Big Data</a>"},
+
+// ============================================================
+// D2 — PROJET / PERFORMANCE
+// ============================================================
+{chap:"D2 — Projet & performance", cmeta:"m-enjeux", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>enjeu</strong> en management ?",
+a:"<p>Un <strong>enjeu</strong> est ce que l'organisation <em>peut gagner ou perdre</em> dans une situation donnée. Il se mesure en gains (avantage concurrentiel, parts de marché, rentabilité) et en risques (perte, coût d'opportunité).</p>",
+ref:"<a href='Fiche_MSG.html#m-enjeux'>Fiche → D2 · Enjeux</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-risque", kind:"discrimination",
+q:"Quelle est la différence entre <strong>risque</strong> et <strong>incertitude</strong> (Knight) ?",
+a:"<ul><li><strong>Risque (Knight)</strong> = événement dont on peut <em>calculer la probabilité d'occurrence</em> (assurable, modélisable).</li><li><strong>Incertitude (Knight)</strong> = événement <em>non probabilisable</em> (innovation radicale, crise inédite). C'est le terrain de l'entrepreneur.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-risque'>Fiche → D2 · Risque</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-sr + b9", kind:"mecanisme",
+q:"Comment calculer le <strong>seuil de rentabilité (SR)</strong> ?",
+a:"<ol class='steps'><li>Calculer la <strong>MSCV</strong> (Marge Sur Coût Variable) = CA − CV.</li><li>Calculer le <strong>taux de MSCV</strong> = MSCV / CA.</li><li><strong>SR (en €)</strong> = Charges fixes / taux de MSCV.</li><li><strong>SR (en quantité)</strong> = CF / (prix unitaire − CV unitaire).</li><li><strong>Point mort</strong> = SR × (365 / CA) = date dans l'année à laquelle on atteint le SR.</li><li><strong>Marge de sécurité</strong> = CA − SR (combien on peut perdre avant déficit).</li></ol>",
+ref:"<a href='Fiche_MSG.html#b9'>Fiche → D2 · b9 — SR</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-projet + b8", kind:"restitution",
+q:"Cite les <strong>6 types de faisabilité</strong> d'un projet (méthode b8).",
+a:"<ol class='steps'><li><strong>Faisabilité technique</strong> — la technologie existe-t-elle ?</li><li><strong>Faisabilité commerciale</strong> — y a-t-il un marché ? Demande suffisante ?</li><li><strong>Faisabilité financière</strong> — peut-on financer (CAF, emprunts, capital) ?</li><li><strong>Faisabilité juridique</strong> — la loi le permet-elle ? Statut adapté ?</li><li><strong>Faisabilité organisationnelle / humaine</strong> — RH compétentes, structure ?</li><li><strong>Faisabilité environnementale / RSE</strong> — impact écologique/social.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b8'>Fiche → D2 · b8 — 6 faisabilités</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-projet + b8", kind:"restitution",
+q:"Que veut dire <strong>SMART</strong> dans la définition d'un objectif ?",
+a:"<ul><li><strong>S</strong>pécifique — précis, ciblé.</li><li><strong>M</strong>esurable — quantifiable (indicateur).</li><li><strong>A</strong>tteignable — ambitieux mais réaliste.</li><li><strong>R</strong>éaliste — compatible avec les ressources.</li><li><strong>T</strong>emporel — délai défini.</li></ul>",
+ref:"<a href='Fiche_MSG.html#b8'>Fiche → D2 · b8 — SMART</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-projet", kind:"restitution",
+q:"Cite les <strong>4P du marketing mix</strong> (Kotler / McCarthy).",
+a:"<ul><li><strong>Product</strong> (produit) — caractéristiques, gamme.</li><li><strong>Price</strong> (prix) — stratégie d'écrémage, pénétration, alignement.</li><li><strong>Place</strong> (distribution) — circuits, points de vente.</li><li><strong>Promotion</strong> (communication) — pub, promo, RP, digital.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-projet'>Fiche → D2 · Projet · 4P</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-marche + b9bis", kind:"mecanisme",
+q:"Comment calcule-t-on le <strong>marché potentiel</strong> ?",
+a:"<ol class='steps'><li><strong>Marché actuel</strong> = clients réels actuels (entreprise + concurrents).</li><li><strong>Marché potentiel</strong> = marché actuel + non-consommateurs <em>relatifs</em> (peuvent devenir clients).</li><li><strong>Marché théorique</strong> = marché potentiel + non-consommateurs <em>absolus</em> (ne consommeront jamais).</li><li><strong>Part de marché (pdm)</strong> = CA entreprise / CA total du marché × 100.</li><li><strong>Taux de pénétration</strong> = nb d'acheteurs / nb d'acheteurs potentiels × 100.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b9bis'>Fiche → D2 · b9bis — Marché potentiel</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-marche", kind:"discrimination",
+q:"Quelle est la différence entre <strong>IRV</strong> et <strong>IDC</strong> ?",
+a:"<ul><li><strong>IRV (Indice de Richesse Vive)</strong> = mesure la richesse <em>réelle d'une zone</em> par rapport à la moyenne nationale (=1). IRV=1,2 → zone 20% plus riche.</li><li><strong>IDC (Indice de Disparité de Consommation)</strong> = mesure la consommation <em>spécifique d'un produit</em> dans une zone par rapport à la moyenne.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-marche'>Fiche → D2 · IRV / IDC</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-perf", kind:"discrimination",
+q:"Quelle est la différence entre <strong>efficacité</strong> et <strong>efficience</strong> ?",
+a:"<ul><li><strong>Efficacité</strong> = atteindre l'objectif (résultat / objectif).</li><li><strong>Efficience</strong> = atteindre l'objectif <em>au moindre coût</em> (résultat / moyens engagés).</li></ul><p>→ Une organisation peut être efficace sans être efficiente.</p>",
+ref:"<a href='Fiche_MSG.html#m-perf'>Fiche → D2 · Performance</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-perf", kind:"restitution",
+q:"Cite les <strong>5 dimensions de la performance globale</strong>.",
+a:"<ul><li><strong>Performance économique</strong> — rentabilité, productivité, parts de marché.</li><li><strong>Performance financière</strong> — CAF, ROE, ROI.</li><li><strong>Performance sociale</strong> — climat, formation, bien-être.</li><li><strong>Performance sociétale (RSE)</strong> — impact société, parties prenantes.</li><li><strong>Performance environnementale</strong> — empreinte carbone, économie circulaire.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-perf'>Fiche → D2 · Performance globale</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-entrepreneur + b16", kind:"auteur",
+q:"Quelle est la <strong>définition de l'entrepreneur</strong> selon Schumpeter ?",
+a:"<p><strong>Joseph Schumpeter</strong> : l'entrepreneur est l'<em>agent moteur de la dynamique économique</em>. Il est à l'origine de la <strong>destruction créatrice</strong> : il innove (5 types d'innovation), bouleverse l'équilibre et détruit les anciennes positions.</p>",
+ref:"<a href='Fiche_MSG.html#m-entrepreneur'>Fiche → D2 · Schumpeter</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-innov + b14", kind:"restitution",
+q:"Cite les <strong>5 types d'innovation</strong> de Schumpeter.",
+a:"<ol class='steps'><li><strong>Innovation de produit</strong> — nouveau bien/service.</li><li><strong>Innovation de procédé</strong> — nouvelle méthode de production.</li><li><strong>Innovation de débouché</strong> — nouveau marché.</li><li><strong>Innovation d'approvisionnement</strong> — nouvelle source de matière première.</li><li><strong>Innovation d'organisation</strong> — nouvelle structure / mode de gestion.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · Innovation</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-innov + b14", kind:"discrimination",
+q:"Différence entre innovation <strong>disruptive</strong>, <strong>incrémentale</strong>, <strong>radicale</strong> ?",
+a:"<ul><li><strong>Incrémentale</strong> — amélioration progressive d'un produit/service existant (ex : iPhone 14 → 15).</li><li><strong>Radicale</strong> — rupture technologique majeure (ex : passage du mécanique au numérique).</li><li><strong>Disruptive (Christensen)</strong> — innovation qui crée un <em>nouveau marché</em> en s'attaquant initialement à un segment négligé, puis remplace l'offre dominante (ex : Netflix vs Blockbuster).</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · Christensen</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-ecosysteme + b17", kind:"auteur",
+q:"Qui a théorisé l'<strong>écosystème d'affaires</strong> ? Définition ?",
+a:"<p><strong>James Moore (1996)</strong>. Un <strong>écosystème d'affaires</strong> est une <em>communauté économique</em> regroupant entreprises, fournisseurs, clients, concurrents et institutions, qui <em>co-évoluent</em> autour d'une <strong>innovation centrale</strong>. Métaphore biologique : symbiose, prédation, coopération.</p>",
+ref:"<a href='Fiche_MSG.html#m-ecosysteme'>Fiche → D2 · Moore</a>"},
+
+// ============================================================
+// D3 — INTENTION STRATÉGIQUE
+// ============================================================
+{chap:"D3 — Intention stratégique", cmeta:"m-intention + b12", kind:"auteur",
+q:"Qu'est-ce que l'<strong>intention stratégique</strong> selon Hamel & Prahalad ?",
+a:"<p><strong>Hamel & Prahalad (1989)</strong> : l'intention stratégique est une <em>ambition à long terme</em> qui crée un <strong>écart volontaire</strong> entre les ressources actuelles et l'objectif visé. Elle <em>tire</em> l'organisation au-delà de ses capacités présentes (≠ planification stratégique classique qui ajuste les objectifs aux moyens).</p>",
+ref:"<a href='Fiche_MSG.html#m-intention'>Fiche → D3 · Hamel & Prahalad</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-finalites-detail", kind:"discrimination",
+q:"Quelle est la différence entre <strong>finalité</strong>, <strong>mission</strong>, <strong>vision</strong> et <strong>métier</strong> ?",
+a:"<ul><li><strong>Finalité</strong> — raison d'être de l'organisation (économique, sociale, sociétale).</li><li><strong>Mission</strong> — ce que l'entreprise <em>fait au quotidien</em> pour réaliser sa finalité.</li><li><strong>Vision</strong> — projection à <em>long terme</em>, ce qu'on veut devenir.</li><li><strong>Métier</strong> — savoir-faire central, cœur de compétence.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-finalites-detail'>Fiche → D3 · Finalités</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-canvas + b13", kind:"auteur",
+q:"Qui a créé le <strong>Business Model Canvas</strong> ? Combien de composantes ?",
+a:"<p><strong>Pigneur & Osterwalder (2010)</strong>. Le BM Canvas comprend <strong>9 composantes</strong> : Segments de marché, Proposition de valeur, Canaux de distribution, Relation client, Sources de revenus, Ressources clés, Activités clés, Partenaires clés, Structure de coûts.</p>",
+ref:"<a href='Fiche_MSG.html#m-canvas'>Fiche → D3 · Pigneur & Osterwalder</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-canvas + b13", kind:"mecanisme",
+q:"Déroule les <strong>9 composantes du BM Canvas</strong> dans l'ordre méthodologique.",
+a:"<ol class='steps'><li><strong>Offre</strong> (quel produit/service).</li><li><strong>Proposition de valeur</strong> (usage / signe / hédonique).</li><li><strong>Segments de marché</strong> (B2B/B2C qualifié).</li><li><strong>Relation client</strong> (≠ distribution).</li><li><strong>Distribution</strong> (court/long, direct/indirect, physique/virtuel).</li><li><strong>Activités clés</strong> (justifier le « clé »).</li><li><strong>Ressources clés</strong> (Penrose : tangibles + intangibles).</li><li><strong>Partenaires clés</strong> (justifier le « clé »).</li><li><strong>Revenus</strong> (pricing : alignement, écrémage, pénétration, commission).</li><li><strong>Coûts</strong>.</li><li><strong>Créer du lien</strong> entre chaque élément et la proposition de valeur.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b13'>Fiche → D3 · b13</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-canvas + b31", kind:"application",
+q:"Méthode b31 : comment construire un BM en <strong>2 étapes</strong> (cas Nespresso) ?",
+a:"<ol class='steps'><li><strong>Étape 1 — Description verbale</strong> : raconter le BM en faisant émerger les 9 composantes (offre, proposition de valeur, etc.) avec les éléments du cas.</li><li><strong>Étape 2 — Canvas formel</strong> : remplir le tableau 9 cases, en justifiant chaque « clé » et en créant les liens avec la proposition de valeur.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b31'>Fiche → D3 · b31 — Nespresso</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-rse", kind:"restitution",
+q:"Quelles sont les <strong>3 dimensions du Triple Bottom Line</strong> (RSE) ?",
+a:"<ul><li><strong>People</strong> (social) — bien-être des collaborateurs, parties prenantes.</li><li><strong>Planet</strong> (environnemental) — impact écologique.</li><li><strong>Profit</strong> (économique) — performance financière.</li></ul><p>Approche d'<strong>Elkington (1997)</strong>.</p>",
+ref:"<a href='Fiche_MSG.html#m-rse'>Fiche → D3 · RSE</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-valeur", kind:"restitution",
+q:"Quelles sont les <strong>3 dimensions de la valeur perçue</strong> par le client ?",
+a:"<ul><li><strong>Valeur d'usage</strong> — utilité fonctionnelle (à quoi ça sert).</li><li><strong>Valeur de signe</strong> — statut social, appartenance (logo, marque).</li><li><strong>Valeur hédonique</strong> — plaisir, émotion, esthétique.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-valeur'>Fiche → D3 · Valeur perçue</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-das + b26", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>DAS</strong> ? Cite les 6 critères d'identification.",
+a:"<p><strong>DAS (Domaine d'Activité Stratégique)</strong> = sous-ensemble homogène de l'entreprise pour lequel on peut formuler une stratégie distincte. <strong>6 critères Strategor</strong> :</p><ol class='steps'><li><strong>Marché / clientèle visée</strong>.</li><li><strong>Technologie</strong> utilisée.</li><li><strong>Concurrents</strong>.</li><li><strong>Distribution</strong>.</li><li><strong>Structure de coûts</strong>.</li><li><strong>Compétences nécessaires</strong>.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b26'>Fiche → D3 · b26 — DAS</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-croissance", kind:"restitution",
+q:"Qu'est-ce qu'une <strong>entreprise en hypercroissance</strong> (verbatim cours) ?",
+a:"<p>« Une entreprise en hypercroissance = <strong>↗ CA de + de 30 % sur 3 à 4 ans</strong>. »</p>",
+ref:"<a href='Fiche_MSG.html#m-croissance'>Fiche → D3 · Hypercroissance</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-croissance", kind:"restitution",
+q:"Cite les <strong>3 critères obligatoires</strong> de la dynamique durable.",
+a:"<ul><li><strong>Facteur humain décisif</strong>.</li><li><strong>Éthique – durable – responsable</strong>.</li><li><strong>Autofinancement &gt; 61 %</strong>.</li></ul><p>+ 3 « c'est mieux » : cœur de métier, outil de production, internationalisation.</p>",
+ref:"<a href='Fiche_MSG.html#m-croissance'>Fiche → D3 · Dynamique durable</a>"},
+
+// ============================================================
+// D4 — DÉCIDER
+// ============================================================
+{chap:"D4 — Décider", cmeta:"m-decision + b18", kind:"auteur",
+q:"Qu'est-ce que la <strong>rationalité limitée</strong> selon Simon ?",
+a:"<p><strong>Herbert Simon (prix Nobel 1978)</strong> : la rationalité limitée est l'idée que les décideurs ne disposent <em>ni de toute l'information, ni du temps, ni des capacités cognitives</em> pour optimiser. Ils ne choisissent pas la <em>meilleure</em> solution mais une solution <strong>satisfaisante</strong> (« satisficing »).</p>",
+ref:"<a href='Fiche_MSG.html#m-decision'>Fiche → D4 · Simon</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-decision + b18", kind:"mecanisme",
+q:"Déroule le <strong>processus décisionnel IMC</strong> de Simon (4 phases).",
+a:"<ol class='steps'><li><strong>I — Intelligence</strong> : repérer le problème, collecter de l'info.</li><li><strong>M — Modélisation</strong> : élaborer des solutions possibles.</li><li><strong>C — Choix</strong> : sélectionner la solution satisfaisante (rationalité limitée).</li><li><strong>Phase de contrôle</strong> : évaluer ex post la décision prise.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-decision'>Fiche → D4 · Modèle IMC</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-decision", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>biais cognitif</strong> ? Cite 3 exemples.",
+a:"<p>Un <strong>biais cognitif</strong> est une <em>déviation systématique du raisonnement rationnel</em> qui affecte la décision.</p><ul><li><strong>Biais de confirmation</strong> — chercher ce qui confirme ses croyances.</li><li><strong>Biais d'ancrage</strong> — surpondérer la 1ère info reçue.</li><li><strong>Biais de disponibilité</strong> — surévaluer ce dont on se souvient facilement.</li><li><strong>Effet de halo</strong> — généraliser à partir d'une 1ère impression.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-decision'>Fiche → D4 · Biais cognitifs</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-systemique + b27", kind:"mecanisme",
+q:"Méthode b27 : comment <strong>montrer qu'un objet peut être considéré comme un système</strong> ?",
+a:"<ol class='steps'><li><strong>Un ensemble d'éléments</strong> — identifier les composantes.</li><li><strong>En interaction</strong> — montrer les relations / flux entre elles.</li><li><strong>Organisé en vue d'une finalité</strong> — quel objectif commun ?</li><li><strong>En relation avec son environnement</strong> — système ouvert (échanges).</li><li><strong>Avec des propriétés émergentes</strong> — le tout est plus que la somme des parties.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b27'>Fiche → D4 · b27 — Système</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-qualif-decision + b28", kind:"discrimination",
+q:"Méthode b28 : qualifier une décision selon <strong>Ansoff</strong> (3 niveaux).",
+a:"<ul><li><strong>Décision stratégique</strong> — long terme, irréversible, direction générale (ex : entrer sur un nouveau marché).</li><li><strong>Décision tactique</strong> — moyen terme, partiellement réversible, niveau intermédiaire (ex : lancer une campagne pub).</li><li><strong>Décision opérationnelle</strong> — court terme, réversible, exécution (ex : passer une commande).</li></ul>",
+ref:"<a href='Fiche_MSG.html#b28'>Fiche → D4 · b28 — Ansoff</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-mintzberg-strat + b29", kind:"auteur",
+q:"Différence entre stratégie <strong>délibérée</strong> et <strong>émergente</strong> (Mintzberg) ?",
+a:"<ul><li><strong>Stratégie délibérée</strong> = planifiée à l'avance par la direction, mise en œuvre comme prévu.</li><li><strong>Stratégie émergente</strong> = se construit <em>chemin faisant</em>, à partir des initiatives du terrain et des opportunités saisies.</li></ul><p>→ La stratégie réelle = mix des deux. Mintzberg (1985) parle de <strong>« stratégie réalisée »</strong>.</p>",
+ref:"<a href='Fiche_MSG.html#m-mintzberg-strat'>Fiche → D4 · Mintzberg délibérée/émergente</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-strat3 + b19", kind:"restitution",
+q:"Cite les <strong>3 niveaux de stratégie</strong>.",
+a:"<ul><li><strong>Stratégie corporate</strong> (niveau groupe) — quels métiers / DAS ? Diversification, internationalisation.</li><li><strong>Stratégie business</strong> (niveau DAS) — comment être compétitif sur ce DAS ? Domination par les coûts, différenciation, focalisation (Porter).</li><li><strong>Stratégie fonctionnelle</strong> (niveau opérations) — RH, marketing, production…</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-strat3'>Fiche → D4 · Stratégies 3 niveaux</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-horloge + b20", kind:"auteur",
+q:"L'<strong>horloge stratégique</strong> : auteurs et 8 positions ?",
+a:"<p><strong>Faulkner & Bowman (1995)</strong>. 2 axes : <em>prix</em> (horizontal) × <em>valeur perçue</em> (vertical). 8 positions :</p><ol class='steps'><li><strong>Prix très bas</strong> (sans valeur).</li><li><strong>Low cost</strong> (faible coût + faible valeur).</li><li><strong>Hybride</strong> (valeur + prix bas).</li><li><strong>Différenciation</strong> (valeur élevée).</li><li><strong>Différenciation focalisée</strong> (valeur très élevée, niche).</li><li><strong>Prix élevé sans valeur</strong> (✗ échec).</li><li><strong>Prix de monopole</strong> (✗ échec).</li><li><strong>Perte de parts de marché</strong> (✗ échec).</li></ol>",
+ref:"<a href='Fiche_MSG.html#b20'>Fiche → D4 · b20 — Bowman</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-mckinsey + b21", kind:"mecanisme",
+q:"À quoi sert la <strong>matrice McKinsey 3×3</strong> ? Quels axes ?",
+a:"<p>Évaluer le portefeuille de DAS d'une entreprise diversifiée. <strong>2 axes</strong> :</p><ul><li><strong>Attractivité du marché</strong> (forte / moyenne / faible) — taux de croissance, intensité concurrentielle, accessibilité.</li><li><strong>Atouts de l'entreprise sur le DAS</strong> (fort / moyen / faible) — parts de marché, ressources, compétences.</li></ul><p>→ 9 cases avec recommandations : <strong>investir / sélectionner / désinvestir</strong>.</p>",
+ref:"<a href='Fiche_MSG.html#b22'>Fiche → D4 · b22 — McKinsey 3×3</a>"},
+
+// ============================================================
+// D5 — ENVIRONNEMENT
+// ============================================================
+{chap:"D5 — Environnement", cmeta:"m-caract + b25", kind:"restitution",
+q:"Quelles sont les <strong>4 caractéristiques de l'environnement</strong> ?",
+a:"<ul><li><strong>Stable / dynamique</strong> — rythme des changements.</li><li><strong>Simple / complexe</strong> — nombre de variables à intégrer.</li><li><strong>Hostile / favorable</strong> — intensité concurrentielle, hostilité des PP.</li><li><strong>Hétérogène / homogène</strong> — diversité des segments.</li></ul>",
+ref:"<a href='Fiche_MSG.html#b25'>Fiche → D5 · b25</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-pestel + b23", kind:"auteur",
+q:"Que veut dire <strong>PESTEL</strong> ? Qui l'a théorisé ?",
+a:"<p><strong>Francis Aguilar (1967)</strong>. <strong>PESTEL</strong> :</p><ul><li><strong>P</strong>olitique — stabilité, politiques publiques.</li><li><strong>É</strong>conomique — croissance, inflation, taux.</li><li><strong>S</strong>ocio-culturel — démographie, valeurs.</li><li><strong>T</strong>echnologique — innovation, R&D.</li><li><strong>É</strong>cologique — env., RSE, climat.</li><li><strong>L</strong>égal — réglementation, droit.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-pestel'>Fiche → D5 · Aguilar / PESTEL</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-porter + b24", kind:"auteur",
+q:"Cite les <strong>5+1 forces de Porter</strong>.",
+a:"<ol class='steps'><li><strong>Intensité concurrentielle</strong> entre firmes existantes.</li><li><strong>Pouvoir de négociation des clients</strong>.</li><li><strong>Pouvoir de négociation des fournisseurs</strong>.</li><li><strong>Menace des nouveaux entrants</strong> (barrières à l'entrée).</li><li><strong>Menace des produits de substitution</strong>.</li><li><strong>+1 : L'État / pouvoirs publics</strong> (ajout européen).</li></ol>",
+ref:"<a href='Fiche_MSG.html#b24'>Fiche → D5 · b24 — Porter</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-porter + b35", kind:"application",
+q:"Méthode b35 : comment <strong>identifier les FCS</strong> d'un secteur (Porter) ?",
+a:"<ol class='steps'><li><strong>Analyser chaque force</strong> (5+1).</li><li>Pour chaque force, identifier ce qu'il faut <strong>maîtriser</strong> pour ne pas la subir.</li><li>Ces éléments à maîtriser = <strong>Facteurs Clés de Succès (FCS)</strong> du secteur.</li><li>Confronter ses propres <strong>ressources/compétences</strong> à ces FCS → diagnostic stratégique.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b35'>Fiche → D5 · b35 — FCS</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-vrin", kind:"auteur",
+q:"Quels sont les <strong>4 critères VRIN</strong> de Barney ?",
+a:"<p><strong>Jay Barney (1991)</strong> — une ressource est source d'<strong>avantage concurrentiel durable</strong> si elle est :</p><ul><li><strong>V</strong>aleur — créer de la valeur pour le client.</li><li><strong>R</strong>are — peu de concurrents la possèdent.</li><li><strong>I</strong>nimitable — difficile à copier.</li><li><strong>N</strong>on substituable — pas remplaçable par autre chose.</li></ul><p>Variante : <strong>VRIO</strong> (Organisationnel) pour les compétences.</p>",
+ref:"<a href='Fiche_MSG.html#m-vrin'>Fiche → D5 · Barney VRIN</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-posconc + b4", kind:"restitution",
+q:"Cite les <strong>4 positions concurrentielles</strong> sur un marché.",
+a:"<ul><li><strong>Leader</strong> — première part de marché, fixe les règles.</li><li><strong>Challenger</strong> — n°2, attaque le leader.</li><li><strong>Suiveur</strong> — imite, évite la confrontation.</li><li><strong>Spécialiste (niche)</strong> — focalisation sur un segment étroit.</li></ul>",
+ref:"<a href='Fiche_MSG.html#b4'>Fiche → D5 · b4</a>"},
+
+// ============================================================
+// D6 — STRUCTURE
+// ============================================================
+{chap:"D6 — Structure", cmeta:"m-structure-composantes + b32", kind:"restitution",
+q:"Cite les <strong>5 composantes de Mintzberg</strong>.",
+a:"<ol class='steps'><li><strong>Sommet stratégique</strong> — direction générale, PDG, CA.</li><li><strong>Ligne hiérarchique</strong> — cadres intermédiaires (directeurs d'usine, chefs d'ateliers).</li><li><strong>Centre opérationnel</strong> — opérateurs qui produisent (ouvriers, vendeurs).</li><li><strong>Technostructure</strong> — analystes (comptabilité, méthodes, ordonnancement) qui standardisent.</li><li><strong>Support logistique</strong> — fonctions support (R&D, juridique, RH, relations publiques).</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-structure-composantes'>Fiche → D6 · 5 composantes</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-meca", kind:"restitution",
+q:"Cite les <strong>6 mécanismes de coordination</strong> de Mintzberg.",
+a:"<ol class='steps'><li><strong>Ajustement mutuel</strong> — communication informelle entre opérationnels.</li><li><strong>Supervision directe</strong> — un chef donne les ordres.</li><li><strong>Standardisation des procédés</strong> — règles, modes opératoires (technostructure).</li><li><strong>Standardisation des résultats</strong> — objectifs chiffrés à atteindre.</li><li><strong>Standardisation des qualifications</strong> — formations communes.</li><li><strong>Standardisation des normes</strong> — culture, idéologie partagée.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-structure-meca'>Fiche → D6 · 6 mécanismes</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-configs + b32", kind:"restitution",
+q:"Cite les <strong>7 configurations structurelles</strong> de Mintzberg.",
+a:"<ol class='steps'><li><strong>Structure entrepreneuriale</strong> (= simple) — startup, fondateur dirige.</li><li><strong>Bureaucratie mécaniste</strong> — production de masse, technostructure dominante.</li><li><strong>Bureaucratie professionnelle</strong> — hôpital, université (centre op qualifié).</li><li><strong>Structure divisionnalisée</strong> — multinationale, divisions autonomes.</li><li><strong>Adhocratie</strong> — laboratoire de recherche, projets, ajustement mutuel.</li><li><strong>Missionnaire</strong> — idéologie forte, standardisation des normes.</li><li><strong>Politisée</strong> — jeux de pouvoir dominants, organisation en crise.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-structure-configs'>Fiche → D6 · 7 configurations</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-configs", kind:"application",
+q:"Dans quelle <strong>configuration</strong> ranger un <strong>hôpital</strong> ? Pourquoi ?",
+a:"<p><strong>Bureaucratie professionnelle</strong>. Justifications :</p><ul><li><strong>Centre opérationnel</strong> dominant (chirurgiens, médecins, infirmières), très qualifié.</li><li>Mécanisme = <strong>standardisation des qualifications</strong> (longue formation, déontologie médicale).</li><li>Forte <strong>décentralisation</strong> du fait de l'autonomie des professionnels.</li><li>Le sommet stratégique (directeur admin) a <em>peu d'influence</em> sur les pratiques.</li><li>Environnement <strong>stable mais complexe</strong>.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-configs'>Fiche → D6 · Bureaucratie professionnelle</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-reseau + b36", kind:"restitution",
+q:"Définition <strong>verbatim</strong> de l'entreprise réseau (cours) ?",
+a:"<p><strong>Entreprise réseau</strong> (= réticulaire, étendue…) = <em>forme d'organisation qui met en relation plusieurs intervenants de qualifications différentes et de statuts différents</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Définition réseau</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-reseau + b36", kind:"discrimination",
+q:"Différence entre <strong>entreprise pivot</strong> et <strong>nœud</strong> dans une structure réseau ?",
+a:"<ul><li><strong>Entreprise pivot</strong> — au centre du réseau, elle coordonne, capte la valeur, impose les standards (ex : Decathlon, Nike).</li><li><strong>Nœud</strong> — entreprises partenaires de l'entreprise pivot (seulement <em>horizontale</em>) : sous-traitants, fournisseurs, distributeurs.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Pivot / Nœud</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-reseau + b36", kind:"auteur",
+q:"Que dit <strong>Coase</strong> sur la relation au sein du réseau ?",
+a:"<p><strong>Ronald Coase</strong> : dans une structure réseau, ce qui régit la relation ce n'est PAS le simple <em>contrat</em>, c'est la <strong>relation de confiance</strong>. Le contrat est la matérialisation technique mais la confiance précède et soutient la relation (ex : McDo / Castelar — contrat de licence + confiance de long terme).</p>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Coase confiance</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-reseau", kind:"restitution",
+q:"Qu'est-ce que la <strong>captation de la valeur</strong> dans un réseau ?",
+a:"<p>« L'entreprise pivot <strong>profite de la valeur fabriquée par tous</strong> » les partenaires du réseau (sous-traitants, fournisseurs, etc.). Elle concentre le pouvoir de négociation et capte la marge la plus élevée le long de la chaîne de valeur.</p>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Captation</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-presentation + b33", kind:"restitution",
+q:"Cite les <strong>6 facteurs de contingence</strong>.",
+a:"<ol class='steps'><li><strong>Stratégie</strong> (Chandler).</li><li><strong>Taille</strong> (Blau).</li><li><strong>Âge</strong> (Stinchcombe, Greiner).</li><li><strong>Technologie</strong> (Woodward).</li><li><strong>Environnement</strong> (Burns & Stalker, Lawrence & Lorsch).</li><li><strong>Pouvoir / mode</strong> (Crozier, DiMaggio & Powell).</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-contingence-presentation'>Fiche → D6 · 6 facteurs</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-strat-taille", kind:"auteur",
+q:"Que dit <strong>Chandler</strong> sur stratégie et structure ?",
+a:"<p><strong>Alfred Chandler (1962)</strong> : « <strong>La structure suit la stratégie</strong> » (« <em>Structure follows strategy</em> »). Quand l'entreprise change de stratégie (diversification, internationalisation), elle doit faire évoluer sa structure pour la mettre en cohérence.</p>",
+ref:"<a href='Fiche_MSG.html#m-contingence-strat-taille'>Fiche → D6 · Chandler</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-techno", kind:"auteur",
+q:"Que dit <strong>Woodward</strong> sur technologie et structure ?",
+a:"<p><strong>Joan Woodward (1965)</strong> distingue 3 types de production qui appellent des structures différentes :</p><ol class='steps'><li><strong>Production unitaire / petite série</strong> → structure flexible, peu de niveaux hiérarchiques.</li><li><strong>Production de masse</strong> → bureaucratie mécaniste, ligne hiérarchique longue.</li><li><strong>Production en continu</strong> (chimie, raffinage) → structure très technique, peu d'opérateurs.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-contingence-techno'>Fiche → D6 · Woodward</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-env", kind:"auteur",
+q:"Que disent <strong>Burns & Stalker</strong> sur env. et structure ?",
+a:"<p><strong>Tom Burns & George Stalker (1961)</strong> : 2 structures selon l'environnement :</p><ul><li><strong>Structure mécaniste</strong> — environnement <em>stable</em> : règles formelles, hiérarchie forte, spécialisation.</li><li><strong>Structure organique</strong> — environnement <em>instable</em> : flexibilité, communication horizontale, ajustement mutuel.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-contingence-env'>Fiche → D6 · Burns & Stalker</a>"},
+
+// ============================================================
+// D7 — RESSOURCES & COMPÉTENCES
+// ============================================================
+{chap:"D7 — Ressources & compétences", cmeta:"m-ressources + b15", kind:"auteur",
+q:"Définition d'une <strong>ressource</strong> selon Penrose (1959) ?",
+a:"<p><strong>Edith Penrose (1959)</strong> : les ressources sont les <strong>actifs qu'une organisation détient</strong> ou qu'elle est capable de mobiliser (lorsqu'ils sont détenus par des partenaires ou des fournisseurs).</p>",
+ref:"<a href='Fiche_MSG.html#m-ressources'>Fiche → D7 · Penrose</a>"},
+
+{chap:"D7 — Ressources & compétences", cmeta:"m-ressources + b15", kind:"discrimination",
+q:"Différence entre ressources <strong>tangibles</strong> et <strong>intangibles</strong> ?",
+a:"<ul><li><strong>Tangibles</strong> = matérielles, identifiables comptablement (bâtiments, machines, stocks, trésorerie).</li><li><strong>Intangibles</strong> = immatérielles, souvent non comptabilisées (brevets, marque, savoir-faire, culture, réputation).</li></ul><p>→ Les ressources intangibles sont souvent les plus stratégiques (rares, inimitables).</p>",
+ref:"<a href='Fiche_MSG.html#m-ressources'>Fiche → D7 · Tangibles/intangibles</a>"},
+
+{chap:"D7 — Ressources & compétences", cmeta:"m-competences", kind:"restitution",
+q:"Qu'est-ce qu'une <strong>compétence</strong> (cours, verbatim) ?",
+a:"<p>« <strong>Compétences : les activités au travers desquelles une organisation utilise ou déploie ses ressources.</strong> »</p>",
+ref:"<a href='Fiche_MSG.html#m-competences'>Fiche → D7 · Compétences</a>"},
+
+{chap:"D7 — Ressources & compétences", cmeta:"m-competences", kind:"auteur",
+q:"Qu'est-ce que le <strong>cœur de compétence</strong> selon Coyne & Clifford ?",
+a:"<p><strong>Coyne & Clifford</strong> : le cœur de compétence (« core competence ») est une compétence <strong>de standard mondial</strong>, source de <em>différenciation</em> et d'<em>avantage concurrentiel durable</em>. C'est ce que l'entreprise fait <em>significativement mieux que ses concurrents</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-competences'>Fiche → D7 · Cœur de compétence</a>"},
+
+{chap:"D7 — Ressources & compétences", cmeta:"m-capa-strat + b34", kind:"mecanisme",
+q:"Méthode b34 : déroule le <strong>diagnostic de la capacité stratégique</strong>.",
+a:"<ol class='steps'><li><strong>Identifier les ressources</strong> (tangibles + intangibles, Penrose).</li><li><strong>Identifier les compétences</strong> (activités qui utilisent ces ressources).</li><li><strong>Tester via VRIN</strong> (Barney) : Valeur, Rareté, Inimitabilité, Non-substituabilité.</li><li>Pour les compétences, ajouter le critère <strong>O (Organisationnel)</strong> → <strong>VRIO</strong>.</li><li>Identifier le <strong>cœur de compétence</strong> (Coyne & Clifford, standard mondial).</li><li>Confronter aux <strong>FCS du secteur</strong> (Porter).</li><li>Conclure : avantage concurrentiel <em>durable</em> ou pas ?</li></ol>",
+ref:"<a href='Fiche_MSG.html#b34'>Fiche → D7 · b34</a>"},
+
+{chap:"D7 — Ressources & compétences", cmeta:"m-competences", kind:"discrimination",
+q:"Différence entre <strong>compétence organisationnelle</strong> et <strong>compétence DE l'organisation</strong> ?",
+a:"<ul><li><strong>Compétence organisationnelle</strong> = capacité globale liée à l'organisation (ex : <em>capacité d'innover</em>).</li><li><strong>Compétences DE l'organisation</strong> = sources de valeur ajoutée multiples (ex : capacité à recruter, à coordonner, à apprendre). Une société possède <em>plusieurs</em> compétences de l'organisation.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-competences'>Fiche → D7 · Distinctions</a>"},
+
+// ============================================================
+// AUTEURS TRANSVERSAUX (questions de récap)
+// ============================================================
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Qui a théorisé l'<strong>Organisation Scientifique du Travail (OST)</strong> ? Quand ?",
+a:"<p><strong>Frederick Winslow Taylor (1911)</strong> dans <em>The Principles of Scientific Management</em>. L'OST repose sur 4 principes :</p><ol class='steps'><li>Étude scientifique du travail (chronométrage).</li><li>Sélection scientifique et formation des ouvriers.</li><li>Coopération cordiale entre dirigeants et ouvriers.</li><li>Division verticale (conception/exécution) + horizontale (parcellisation des tâches).</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-structure-caract'>Fiche → D6 · Taylor</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Adam Smith</strong> sur la division du travail ?",
+a:"<p><strong>Adam Smith (1776, <em>Recherches sur la nature et les causes de la richesse des nations</em>)</strong> : la <strong>division du travail</strong> est source de gains de productivité (cf. fabrique d'épingles). Inspire Taylor un siècle plus tard pour l'OST.</p>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-auteurs'>Fiche Auteurs → Adam Smith</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Henri Fayol</strong> sur le management ?",
+a:"<p><strong>Henri Fayol (1916, <em>Administration industrielle et générale</em>)</strong>. <strong>5 fonctions du management</strong> (POCCC) : <em>Prévoir, Organiser, Commander, Coordonner, Contrôler</em>. + <strong>14 principes</strong> dont l'unité de commandement, la spécialisation, l'autorité.</p>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-mgmt'>Fiche Auteurs → Fayol</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Max Weber</strong> sur la bureaucratie ?",
+a:"<p><strong>Max Weber (début XXe)</strong> : la <strong>bureaucratie rationnelle-légale</strong> est la forme la plus efficace d'organisation. Caractéristiques : hiérarchie claire, règles écrites, division des tâches, recrutement au mérite, impersonnalité. Modèle <em>type idéal</em>.</p>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-auteurs'>Fiche Auteurs → Weber</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Qu'est-ce que la <strong>dépendance de sentier</strong> (P. David) ?",
+a:"<p><strong>Paul David (1985, QWERTY)</strong> : <strong>« Changer de fournisseur demande de changer trop de choses sur le produit, donc trop cher de rester avec le même fournisseur. »</strong> Plus généralement : les choix passés conditionnent fortement les choix futurs (<em>path dependence</em>). Exemple : clavier QWERTY non optimal mais bloquant le passage à un autre standard.</p>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · P. David</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que disent <strong>Pfeffer & Salancik</strong> sur les relations interorganisationnelles ?",
+a:"<p><strong>Pfeffer & Salancik (1978)</strong> — <em>théorie de la dépendance des ressources</em> : aucune organisation n'est autosuffisante ; elle dépend des autres pour ses ressources critiques. Dans une <strong>structure réseau</strong>, on parle de <strong>dépendance bilatérale mutuelle</strong> entre l'entreprise pivot et ses partenaires.</p>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Pfeffer & Salancik</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Michael Crozier</strong> sur le pouvoir dans les organisations ?",
+a:"<p><strong>Michael Crozier (1977, <em>L'Acteur et le système</em>)</strong> — <em>l'analyse stratégique</em> : dans toute organisation, les acteurs développent des <strong>stratégies de pouvoir</strong> en exploitant les <em>zones d'incertitude</em> (compétence experte, info, règles, environnement). Pas d'organisation totalement rationnelle.</p>",
+ref:"<a href='Fiche_MSG.html#m-contingence-pouvoir-mode'>Fiche → D6 · Crozier</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Confucius</strong> sur le management (mention cours) ?",
+a:"<p><strong>Confucius</strong> est cité dans le cours pour son apport sur le <strong>management par les normes</strong> et l'importance des <strong>valeurs partagées</strong> dans la coordination organisationnelle — préfigure la <strong>structure missionnaire</strong> de Mintzberg.</p>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-auteurs'>Fiche Auteurs → Confucius</a>"},
+
+// ============================================================
+// SYNTHÈSES & APPLICATIONS TRANSVERSALES
+// ============================================================
+{chap:"Synthèses transversales", cmeta:"Méthode appliquée", kind:"application",
+q:"Cas TabledOr (PME mobilier) : 200 salariés, structure entrepreneuriale au départ, croissance rapide. Comment <strong>analyser sa structure</strong> ?",
+a:"<ol class='steps'><li><strong>Composantes (Mintzberg)</strong> : identifier qui occupe le <em>sommet stratégique</em>, la <em>ligne hiérarchique</em>, le <em>centre opérationnel</em>, etc.</li><li><strong>Mécanismes de coordination</strong> : a priori encore <em>supervision directe</em> + <em>ajustement mutuel</em>, mais besoin croissant de <em>standardisation des procédés</em>.</li><li><strong>Caractéristiques</strong> : à 200 salariés, on dépasse la structure entrepreneuriale ; transition vers <em>bureaucratie mécaniste</em> probable.</li><li><strong>Facteurs de contingence</strong> : taille (Blau), âge (Greiner), techno (Woodward).</li><li><strong>Recommandation</strong> : formaliser, créer une technostructure, mettre en place la standardisation.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b32'>Fiche → D6 · b32 — Application</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Méthode appliquée", kind:"application",
+q:"Cas Nespresso : <strong>construire le BM</strong> en 2 étapes.",
+a:"<p><strong>Étape 1 — description verbale</strong> :</p><ul><li><strong>Offre</strong> = café en capsules dosées + machines Nespresso.</li><li><strong>Proposition de valeur</strong> = café gourmet à la maison, simplicité, design, expérience (valeur d'usage + signe + hédonique).</li><li><strong>Segments</strong> = particuliers CSP+ (B2C) + entreprises (B2B).</li><li><strong>Distribution</strong> = boutiques flagship + Nespresso.com (vente directe) + Club Nespresso.</li><li><strong>Activités clés</strong> = R&D capsules, expérience client, marketing premium.</li><li><strong>Ressources clés</strong> = marque (intangible), brevets, réseau boutiques.</li><li><strong>Partenaires clés</strong> = producteurs de café AAA, designers, ambassadeurs (Clooney).</li><li><strong>Revenus</strong> = vente machines (faible marge) + capsules (forte marge, modèle <em>rasoir / lames</em>).</li><li><strong>Coûts</strong> = R&D, marketing, distribution premium.</li></ul><p><strong>Étape 2</strong> : remplir le canvas formel et justifier le lien entre chaque composante et la proposition de valeur.</p>",
+ref:"<a href='Fiche_MSG.html#b31'>Fiche → D3 · b31 — Nespresso</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Discrimination piège", kind:"discrimination",
+q:"Piège du cours : différence entre <strong>composantes</strong> et <strong>structure</strong> ?",
+a:"<ul><li><strong>Composantes</strong> = les <em>5 briques</em> de Mintzberg (sommet, ligne, centre op, technostructure, support).</li><li><strong>Structure</strong> = la <em>configuration globale</em> qui résulte de leur agencement + du mécanisme de coordination dominant (les 7 configurations).</li></ul><p>→ Décrire les composantes ≠ identifier la structure. Il faut faire les <strong>deux</strong>.</p>",
+ref:"<a href='Fiche_MSG.html#m-structure-caract'>Fiche → D6 · Piège</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Discrimination piège", kind:"discrimination",
+q:"Piège : différence entre <strong>technocentre</strong> et <strong>technostructure</strong> (Mintzberg) ?",
+a:"<ul><li><strong>Technostructure</strong> (Mintzberg) = composante de l'organisation regroupant les <em>analystes</em> qui standardisent (comptabilité, ordonnancement, méthodes).</li><li><strong>Technocentre</strong> = exemple Renault, lieu physique de R&D et conception. C'est <em>une activité support / R&D</em>, PAS la technostructure de Mintzberg.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-composantes'>Fiche → D6 · Piège technocentre</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Discrimination piège", kind:"discrimination",
+q:"Piège : différence entre <strong>qualité globale</strong> et <strong>qualité totale</strong> ?",
+a:"<ul><li><strong>Qualité totale (TQM, modèle japonais)</strong> = approche organisationnelle pour <em>améliorer en continu</em> la qualité à tous les niveaux (Kaizen, lean).</li><li><strong>Qualité globale</strong> = mesure de la qualité <em>perçue</em> par les parties prenantes (clients, salariés, fournisseurs, société). Plus large que la qualité totale.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Piège qualité</a>"},
+
+// === LIMINAIRE — Définitions transversales fondamentales ===
+{chap:"Liminaire — Définitions fondamentales", cmeta:"m-defs-fond", kind:"restitution",
+q:"Définition <strong>verbatim</strong> du <strong>management</strong> selon Mme Soler.",
+a:"<p>Le <strong>management</strong> est l'<em>art de conduire les hommes et les organisations en mobilisant des ressources rares pour atteindre des objectifs dans un environnement changeant</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-defs-fond'>Fiche → Liminaire · Management</a>"},
+
+{chap:"Liminaire — Définitions fondamentales", cmeta:"m-defs-fond", kind:"discrimination",
+q:"Différence <strong>efficacité</strong> vs <strong>efficience</strong> (verbatim) ?",
+a:"<ul><li><strong>Efficacité</strong> = capacité à <em>atteindre les objectifs fixés</em>.</li><li><strong>Efficience</strong> = capacité à atteindre ces objectifs <em>avec le minimum de moyens</em> (ressources, temps, coûts).</li></ul><p>→ On peut être efficace sans être efficient.</p>",
+ref:"<a href='Fiche_MSG.html#m-defs-fond'>Fiche → Liminaire · Efficacité/Efficience</a>"},
+
+{chap:"Liminaire — Définitions fondamentales", cmeta:"m-defs-fond", kind:"restitution",
+q:"Qu'est-ce que la <strong>synergie</strong> ?",
+a:"<p><strong>Synergie</strong> = effet par lequel l'<em>action coordonnée de plusieurs éléments produit un résultat supérieur à la somme</em> de leurs actions individuelles. <em>« 2 + 2 = 5 »</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-defs-fond'>Fiche → Liminaire · Synergie</a>"},
+
+{chap:"Liminaire — Définitions fondamentales", cmeta:"m-defs-fond", kind:"restitution",
+q:"Que sont les <strong>softskills</strong> ?",
+a:"<p>Les <strong>softskills</strong> sont les <em>compétences comportementales et relationnelles</em> (intelligence émotionnelle, communication, créativité, esprit d'équipe, leadership) — par opposition aux <strong>hardskills</strong> (compétences techniques).</p>",
+ref:"<a href='Fiche_MSG.html#m-defs-fond'>Fiche → Liminaire · Softskills</a>"},
+
+{chap:"Liminaire — Définitions fondamentales", cmeta:"m-defs-fond", kind:"restitution",
+q:"Qu'est-ce que la <strong>culture managériale</strong> ?",
+a:"<p><strong>Culture managériale</strong> = <em>ensemble des valeurs, croyances, normes et comportements partagés</em> au sein d'une organisation, qui orientent la prise de décision et les pratiques managériales.</p>",
+ref:"<a href='Fiche_MSG.html#m-defs-fond'>Fiche → Liminaire · Culture managériale</a>"},
+
+// === D1 — INFORMATION (compléments) ===
+{chap:"D1 — Information", cmeta:"m-info", kind:"restitution",
+q:"Donne la chaîne <strong>donnée → information → renseignement → sens</strong> (méthode du « donné à la décision »).",
+a:"<ol class='steps'><li><strong>Donnée</strong> = élément brut, non interprété (chiffre, fait isolé).</li><li><strong>Information</strong> = donnée mise en contexte, qui prend du sens.</li><li><strong>Renseignement</strong> = information traitée et qualifiée par un destinataire (validée, croisée).</li><li><strong>Sens / Signe</strong> (Karl Weick, <em>sense making</em>) = construction collective de sens à partir des renseignements pour décider.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-info'>Fiche → D1 · Méthode donné→décision</a>"},
+
+{chap:"D1 — Information", cmeta:"m-info", kind:"auteur",
+q:"Qu'est-ce que le <strong>SI (Système d'Information)</strong> selon Reix ?",
+a:"<p><strong>Reix</strong> : un <strong>SI</strong> est un <em>ensemble organisé de ressources (matériel, logiciel, personnel, données, procédures)</em> permettant d'acquérir, traiter, stocker, communiquer des informations dans des organisations.</p>",
+ref:"<a href='Fiche_MSG.html#m-info'>Fiche → D1 · Reix</a>"},
+
+{chap:"D1 — Information", cmeta:"m-info", kind:"discrimination",
+q:"Différence entre <strong>recensement</strong> et <strong>sondage</strong> ?",
+a:"<ul><li><strong>Recensement</strong> = collecte d'info auprès de <em>toute</em> la population concernée (exhaustif, coûteux, fiable).</li><li><strong>Sondage</strong> = collecte d'info auprès d'un <em>échantillon représentatif</em> (plus rapide, moins cher, marge d'erreur).</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-info'>Fiche → D1 · Recensement vs Sondage</a>"},
+
+{chap:"D1 — Information", cmeta:"m-troubles", kind:"restitution",
+q:"Qu'est-ce que l'<strong>infobésité</strong> ?",
+a:"<p><strong>Infobésité</strong> = <em>surcharge informationnelle</em> : trop d'informations à traiter par rapport aux capacités cognitives, entraînant stress, baisse de productivité, mauvaises décisions.</p>",
+ref:"<a href='Fiche_MSG.html#m-troubles'>Fiche → D1 · Infobésité</a>"},
+
+{chap:"D1 — Information", cmeta:"m-troubles", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>deep fake</strong> ? Quel cadre légal ?",
+a:"<p><strong>Deep fake</strong> = contenu (image, vidéo, audio) <em>généré artificiellement par IA</em> pour faire passer pour réelle une scène fausse. Encadré par l'<strong>IA Act (Règlement UE sur l'IA, 21 mai 2024)</strong> qui impose un étiquetage obligatoire.</p>",
+ref:"<a href='Fiche_MSG.html#m-troubles'>Fiche → D1 · Deep fake</a>"},
+
+{chap:"D1 — Information", cmeta:"m-ia-solutions", kind:"restitution",
+q:"Cite les <strong>6 solutions</strong> pour traiter les problèmes liés à l'IA.",
+a:"<ol class='steps'><li><strong>Régulation juridique</strong> (IA Act, RGPD).</li><li><strong>Théorie du signal (Spence)</strong> — certifier l'origine humaine/IA des contenus.</li><li><strong>Éducation & formation</strong> à l'usage critique.</li><li><strong>Veille technologique</strong>.</li><li><strong>Communautés</strong> de partage (open source, fact-checking).</li><li><strong>Outils techniques</strong> (filigrane, blockchain, watermarking).</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-ia-solutions'>Fiche → D1 · 6 solutions IA</a>"},
+
+{chap:"D1 — Information", cmeta:"m-ia-solutions", kind:"auteur",
+q:"Qu'est-ce que la <strong>théorie du signal</strong> (Spence) ?",
+a:"<p><strong>Michael Spence (1973, prix Nobel 2001)</strong> : dans un contexte d'<em>asymétrie d'information</em>, les agents informés émettent des <strong>signaux</strong> coûteux et crédibles pour se distinguer (ex : diplôme = signal de productivité sur le marché du travail).</p>",
+ref:"<a href='Fiche_MSG.html#m-ia-solutions'>Fiche → D1 · Spence</a>"},
+
+{chap:"D1 — Information", cmeta:"m-int-individuelle", kind:"auteur",
+q:"Citation de <strong>Confucius</strong> sur l'intelligence (cours) ?",
+a:"<p><strong>Confucius</strong> : <em>« L'intelligence est la faculté qui s'adapte à toutes choses. »</em> Mobilisé pour justifier la pluralité des formes d'intelligence (Gardner).</p>",
+ref:"<a href='Fiche_MSG.html#m-int-individuelle'>Fiche → D1 · Confucius</a>"},
+
+{chap:"D1 — Information", cmeta:"m-int-collective", kind:"restitution",
+q:"Qu'est-ce qu'une <strong>communauté de pratique</strong> (Wenger) ?",
+a:"<p><strong>Étienne Wenger</strong> : une <strong>communauté de pratique</strong> est un <em>groupe d'individus qui partagent une préoccupation, un ensemble de problèmes ou une passion sur un sujet donné, et qui approfondissent leurs connaissances et leur expertise dans ce domaine en interagissant régulièrement</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-int-collective'>Fiche → D1 · Wenger</a>"},
+
+{chap:"D1 — Information", cmeta:"m-int-collective", kind:"auteur",
+q:"Qu'est-ce que l'<strong>apprentissage organisationnel</strong> selon Peter Senge ?",
+a:"<p><strong>Peter Senge</strong> : capacité d'une organisation à <em>créer, acquérir, transférer du savoir</em> et à <em>modifier son comportement</em> pour refléter ces nouvelles connaissances. 5 disciplines : <em>vision partagée, modèles mentaux, apprentissage en équipe, maîtrise personnelle, pensée systémique</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-int-collective'>Fiche → D1 · Senge</a>"},
+
+{chap:"D1 — Information", cmeta:"m-bigdata", kind:"auteur",
+q:"Définition du <strong>Big Data</strong> selon Gartner.",
+a:"<p><strong>Gartner</strong> : « <em>Le Big Data regroupe une famille d'outils qui répondent à une triple problématique : un volume de données important à traiter, une grande variété d'informations, et un niveau de vélocité à atteindre.</em> »</p>",
+ref:"<a href='Fiche_MSG.html#m-bigdata'>Fiche → D1 · Gartner</a>"},
+
+{chap:"D1 — Information", cmeta:"m-bigdata", kind:"restitution",
+q:"Quelle est la chaîne <strong>données → informations → connaissances</strong> ?",
+a:"<ol class='steps'><li><strong>Données</strong> = éléments bruts collectés (chiffres, faits).</li><li><strong>Informations</strong> = données traitées et mises en contexte → utiles pour décider.</li><li><strong>Connaissances</strong> = informations intégrées, structurées, mobilisables pour agir (capacité d'action).</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-bigdata'>Fiche → D1 · Chaîne données→connaissances</a>"},
+
+{chap:"D1 — Information", cmeta:"m-bigdata", kind:"restitution",
+q:"Définition <strong>verbatim</strong> de la <strong>supply chain</strong> ?",
+a:"<p><strong>Supply chain</strong> = <em>chaîne d'approvisionnement</em> = ensemble des étapes (fournisseurs, production, stockage, transport, distribution) qui permettent à un produit d'aller de la matière première au client final.</p>",
+ref:"<a href='Fiche_MSG.html#m-bigdata'>Fiche → D1 · Supply chain</a>"},
+
+{chap:"D1 — Information", cmeta:"m-bigdata", kind:"restitution",
+q:"Définition <strong>verbatim</strong> de la <strong>logistique</strong> ?",
+a:"<p><strong>Logistique</strong> = <em>ensemble des activités ayant pour but la mise en place, au moindre coût, d'une quantité de produit, à l'endroit et au moment où la demande existe</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-bigdata'>Fiche → D1 · Logistique</a>"},
+
+{chap:"D1 — Information", cmeta:"m-bigdata", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>datawarehouse</strong> ?",
+a:"<p><strong>Datawarehouse</strong> (entrepôt de données) = <em>base de données centralisée</em> qui agrège, stocke et organise les données provenant de sources hétérogènes pour les exploiter à des fins d'analyse et de décision.</p>",
+ref:"<a href='Fiche_MSG.html#m-bigdata'>Fiche → D1 · Datawarehouse</a>"},
+
+{chap:"D1 — Information", cmeta:"m-sources", kind:"restitution",
+q:"Méthode <strong>3 critères</strong> pour évaluer une source d'information ?",
+a:"<ol class='steps'><li><strong>Type</strong> : primaire (créée par l'entreprise) vs secondaire (externe).</li><li><strong>Origine</strong> : interne / externe.</li><li><strong>Fiabilité</strong> : crédibilité, traçabilité, date.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-sources'>Fiche → D1 · Sources d'information</a>"},
+
+{chap:"D1 — Information", cmeta:"m-qualite", kind:"restitution",
+q:"Cite les <strong>10 critères</strong> de qualité de l'information (méthode m-qualite).",
+a:"<ol class='steps'><li><strong>Pertinence</strong>.</li><li><strong>Fiabilité</strong>.</li><li><strong>Exactitude</strong>.</li><li><strong>Actualité / fraîcheur</strong>.</li><li><strong>Accessibilité</strong>.</li><li><strong>Compréhensibilité</strong>.</li><li><strong>Confidentialité</strong>.</li><li><strong>Intégrité</strong>.</li><li><strong>Disponibilité</strong>.</li><li><strong>Coût</strong> (rapport qualité/coût acceptable).</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-qualite'>Fiche → D1 · 10 critères</a>"},
+
+// === D2 — PROJET & PERFORMANCE (compléments) ===
+{chap:"D2 — Projet & performance", cmeta:"m-sr", kind:"auteur",
+q:"Définition du <strong>tableau de bord</strong> selon Bouquin (1987) ?",
+a:"<p><strong>Bouquin (1987)</strong> : un <strong>tableau de bord</strong> est un <em>ensemble d'indicateurs synthétiques permettant aux responsables de prendre connaissance de l'état et de l'évolution des systèmes qu'ils pilotent, et d'identifier les tendances</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-sr'>Fiche → D2 · Bouquin tableau de bord</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-sr", kind:"auteur",
+q:"Qu'est-ce que le <strong>tableau de bord prospectif</strong> (Balanced Scorecard) ? Auteurs ?",
+a:"<p><strong>Kaplan & Norton (1992)</strong> — le <strong>Balanced Scorecard</strong> mesure la performance selon <strong>4 axes</strong> équilibrés :</p><ol class='steps'><li><strong>Financier</strong> — ROI, CA, rentabilité.</li><li><strong>Clients</strong> — satisfaction, fidélité.</li><li><strong>Processus internes</strong> — qualité, délais, productivité.</li><li><strong>Apprentissage organisationnel</strong> — formation, innovation, RH.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-sr'>Fiche → D2 · Kaplan & Norton</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-sr", kind:"restitution",
+q:"Qu'est-ce que le <strong>levier opérationnel (LO)</strong> ?",
+a:"<p><strong>Levier opérationnel</strong> (ou levier d'exploitation) = <em>sensibilité du résultat d'exploitation à une variation du CA</em>. Calcul : <strong>LO = MSCV / Résultat d'exploitation</strong>. Plus le LO est élevé, plus le résultat est sensible aux variations d'activité (structure de coûts à forte part fixe).</p>",
+ref:"<a href='Fiche_MSG.html#m-sr'>Fiche → D2 · Levier opérationnel</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-sr", kind:"discrimination",
+q:"Différence entre <strong>coûts partiels</strong> et <strong>coûts spécifiques</strong> ?",
+a:"<ul><li><strong>Méthode des coûts partiels</strong> = ne prend en compte que les <em>coûts variables</em> pour calculer la marge (MSCV).</li><li><strong>Méthode des coûts spécifiques</strong> = ajoute aux coûts variables les <em>coûts fixes directs</em> (spécifiquement attribuables à un produit/DAS), donnant une marge plus complète.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-sr'>Fiche → D2 · Coûts partiels/spécifiques</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-sr", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>amortissement</strong> ?",
+a:"<p><strong>Amortissement</strong> = <em>constatation comptable de la perte de valeur d'une immobilisation</em> (machine, bâtiment, brevet) due à l'usage, au temps ou à l'obsolescence. Étalé sur la durée de vie utile du bien. C'est une <strong>charge calculée</strong> (non décaissée).</p>",
+ref:"<a href='Fiche_MSG.html#m-sr'>Fiche → D2 · Amortissement</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-marche", kind:"restitution",
+q:"Définition <strong>verbatim</strong> du <strong>marché</strong> (Mme Soler) ?",
+a:"<p>Le <strong>marché</strong> est le <em>lieu de rencontre entre une offre et une demande, sur lequel se forme un prix d'échange</em>. Au sens managérial, c'est <em>l'ensemble des consommateurs réels et potentiels d'un produit</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-marche'>Fiche → D2 · Marché</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-marche", kind:"mecanisme",
+q:"Méthode <strong>Spt°6</strong> : estimer le <strong>pouvoir d'achat d'une agglomération</strong> via l'IRV.",
+a:"<ol class='steps'><li>Récupérer la <strong>population</strong> de l'agglo (P).</li><li>Récupérer le <strong>revenu moyen national par habitant</strong> (R<sub>n</sub>).</li><li>Récupérer l'<strong>IRV</strong> de l'agglo (ex : 1,2 → 20% plus riche que la moyenne).</li><li><strong>Pouvoir d'achat total</strong> = P × R<sub>n</sub> × IRV.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-marche'>Fiche → D2 · Méthode IRV</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-marche", kind:"mecanisme",
+q:"Méthode <strong>Spt°7</strong> : estimer le <strong>marché potentiel</strong> d'une zone via l'IDC.",
+a:"<ol class='steps'><li>Calculer le marché national du produit (CA<sub>n</sub> ou volume).</li><li>Récupérer la <strong>part de la population</strong> de la zone (p%).</li><li>Récupérer l'<strong>IDC</strong> de la zone pour ce produit (ex : 0,8 → consommation 20% inférieure à la moyenne).</li><li><strong>Marché potentiel zone</strong> = CA<sub>n</sub> × p% × IDC.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-marche'>Fiche → D2 · Méthode IDC</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-perf", kind:"auteur",
+q:"Qu'est-ce que la <strong>performance globale</strong> selon Lepetit ?",
+a:"<p><strong>Lepetit</strong> : la <strong>performance globale</strong> intègre les <em>3 dimensions</em> de la performance — <strong>économique</strong> (financière, productivité), <strong>sociale</strong> (RH, climat) et <strong>sociétale/environnementale</strong> (RSE, impact société + planète). Pas de performance durable sans équilibre des 3.</p>",
+ref:"<a href='Fiche_MSG.html#m-perf'>Fiche → D2 · Lepetit</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-perf", kind:"restitution",
+q:"Qu'est-ce que la <strong>performance commerciale</strong> ?",
+a:"<p><strong>Performance commerciale</strong> = capacité de l'entreprise à <em>conquérir et fidéliser des clients sur ses marchés</em>. Mesurée par : <strong>part de marché, taux de conversion, panier moyen, taux de fidélisation, NPS (Net Promoter Score)</strong>.</p>",
+ref:"<a href='Fiche_MSG.html#m-perf'>Fiche → D2 · Perf commerciale</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-perf", kind:"restitution",
+q:"Définition <strong>verbatim</strong> de la <strong>comptabilité</strong> ?",
+a:"<p><strong>Comptabilité</strong> = <em>technique d'enregistrement, de classification et de synthèse des opérations économiques d'une entité, permettant de produire des états financiers (bilan, compte de résultat, annexe) servant à informer les parties prenantes et à piloter la performance</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-perf'>Fiche → D2 · Comptabilité</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-entrepreneur", kind:"restitution",
+q:"Définition <strong>verbatim</strong> de l'<strong>entrepreneur</strong> (Mme Soler).",
+a:"<p>L'<strong>entrepreneur</strong> est <em>celui qui prend des risques pour créer ou développer une activité économique, en mobilisant des ressources rares dans le but de générer de la valeur</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-entrepreneur'>Fiche → D2 · Entrepreneur</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-entrepreneur", kind:"restitution",
+q:"Qu'est-ce que la <strong>sagacité</strong> de l'entrepreneur ?",
+a:"<p><strong>Sagacité</strong> = capacité à <em>détecter des opportunités</em> que les autres ne voient pas (ex : nouveau besoin, créneau de marché, faille concurrentielle). Trait essentiel de l'entrepreneur (Kirzner).</p>",
+ref:"<a href='Fiche_MSG.html#m-entrepreneur'>Fiche → D2 · Sagacité</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-entrepreneur", kind:"restitution",
+q:"Qu'est-ce que les <strong>Business Angels</strong> ?",
+a:"<p><strong>Business Angels</strong> = <em>investisseurs individuels</em> (souvent anciens entrepreneurs) qui apportent <em>du capital + leur expertise et leur réseau</em> à de jeunes entreprises innovantes, généralement en phase d'amorçage.</p>",
+ref:"<a href='Fiche_MSG.html#m-entrepreneur'>Fiche → D2 · Business Angels</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-entrepreneur", kind:"auteur",
+q:"Qu'est-ce que l'<strong>océan rouge</strong> vs <strong>océan bleu</strong> (Kim & Mauborgne) ?",
+a:"<ul><li><strong>Océan rouge</strong> = marché existant, <em>saturé de concurrence sanglante</em>, où les firmes se disputent les parts de marché (rouge = sang).</li><li><strong>Océan bleu</strong> = <em>espace de marché vierge, inexploré</em>, créé par l'innovation. Pas de concurrence directe.</li></ul><p><strong>Kim & Mauborgne (2005)</strong> : la stratégie consiste à <em>créer son océan bleu</em> plutôt qu'à lutter dans l'océan rouge.</p>",
+ref:"<a href='Fiche_MSG.html#m-entrepreneur'>Fiche → D2 · Kim & Mauborgne</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-innov", kind:"restitution",
+q:"Définition <strong>verbatim</strong> de l'<strong>innovation</strong> selon l'INSEE.",
+a:"<p><strong>INSEE</strong> : l'innovation est <em>« la mise en œuvre d'un produit, d'un procédé, d'une méthode de commercialisation ou d'organisation nouveau ou sensiblement amélioré »</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · Innovation INSEE</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-innov", kind:"restitution",
+q:"Définition <strong>verbatim</strong> d'un <strong>brevet</strong>.",
+a:"<p><strong>Brevet</strong> = <em>titre de propriété industrielle qui confère à son titulaire un droit exclusif d'exploitation sur l'invention brevetée, pour une durée limitée (généralement 20 ans), en contrepartie de la divulgation publique de l'invention</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · Brevet</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-innov", kind:"auteur",
+q:"Qu'est-ce que le <strong>dilemme de l'innovateur</strong> (Christensen) ?",
+a:"<p><strong>Clayton Christensen (1997)</strong> : les <em>entreprises leader</em> ont du mal à adopter une innovation disruptive parce que celle-ci <em>cannibalise</em> leur produit phare. Elles préfèrent perfectionner l'existant et se font dépasser par les nouveaux entrants (ex : Kodak ↔ photo numérique).</p>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · Christensen</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-innov", kind:"restitution",
+q:"Qu'est-ce que l'<strong>innovation sérendipité</strong> ?",
+a:"<p><strong>Sérendipité</strong> = innovation découverte <em>par hasard</em>, en cherchant autre chose. Exemples : post-it (3M), pénicilline (Fleming), micro-ondes, Viagra. Souvent associée à la culture de l'<em>essai-erreur</em> et à la curiosité scientifique.</p>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · Sérendipité</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-innov", kind:"restitution",
+q:"Qu'est-ce que l'<strong>innovation frugale</strong> ?",
+a:"<p><strong>Innovation frugale</strong> (ou <em>jugaad</em>) = innovation qui <em>répond à un besoin essentiel avec un minimum de ressources</em>. Produit simple, abordable, robuste. Née en Inde. Exemple : Tata Nano (voiture à 2 000 €), incubateurs pour bébés à 25 €.</p>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · Innovation frugale</a>"},
+
+{chap:"D2 — Projet & performance", cmeta:"m-innov", kind:"auteur",
+q:"Qu'est-ce que l'<strong>ambidextrie organisationnelle</strong> (James March) ?",
+a:"<p><strong>James March</strong> : capacité d'une organisation à mener <em>simultanément</em> deux logiques opposées :</p><ul><li><strong>Exploitation</strong> de l'existant (efficience, optimisation).</li><li><strong>Exploration</strong> de nouveautés (innovation, R&D, créativité).</li></ul><p>→ Difficile car ces deux logiques ont des cultures/structures différentes.</p>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · March ambidextrie</a>"},
+
+// === D3 — INTENTION STRATÉGIQUE (compléments) ===
+{chap:"D3 — Intention stratégique", cmeta:"m-finalites-detail", kind:"restitution",
+q:"Définition <strong>verbatim</strong> de la <strong>finalité</strong> (Mme Soler).",
+a:"<p>La <strong>finalité</strong> est la <em>raison d'être de l'entreprise, son but ultime, ce qui justifie son existence</em>. Elle traduit la vision des dirigeants et oriente la stratégie sur le long terme.</p>",
+ref:"<a href='Fiche_MSG.html#m-finalites-detail'>Fiche → D3 · Finalité</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-finalites-detail", kind:"discrimination",
+q:"Cite et différencie les <strong>4 grandes finalités</strong>.",
+a:"<ul><li><strong>Finalité de rentabilité</strong> (économique/financière) — créer de la valeur pour les actionnaires.</li><li><strong>Finalité de croissance</strong> — accroître la taille (CA, parts de marché, salariés).</li><li><strong>Finalité sociale</strong> — bien-être des salariés, qualité de vie au travail.</li><li><strong>Finalité sociétale</strong> — impact positif sur la société et l'environnement (RSE).</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-finalites-detail'>Fiche → D3 · 4 finalités</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-finalites-detail", kind:"discrimination",
+q:"Différence entre <strong>mécénat</strong> et <strong>sponsoring</strong> ?",
+a:"<ul><li><strong>Mécénat</strong> = don <em>sans contrepartie publicitaire directe</em>, motivé par l'intérêt général (culture, sport, social). Fiscalement avantageux.</li><li><strong>Sponsoring</strong> (parrainage) = soutien financier <em>avec contrepartie publicitaire</em> (logo, visibilité). Logique commerciale.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-finalites-detail'>Fiche → D3 · Mécénat/Sponsoring</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-finalites-detail", kind:"auteur",
+q:"Que dit <strong>Peter Drucker</strong> sur la finalité de l'entreprise ?",
+a:"<p><strong>Peter Drucker</strong> : <em>« La seule définition valable de la finalité d'une entreprise est de créer un client. »</em> La finalité n'est pas le profit (qui est une conséquence) mais la satisfaction d'un besoin client.</p>",
+ref:"<a href='Fiche_MSG.html#m-finalites-detail'>Fiche → D3 · Drucker</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-finalites-detail", kind:"restitution",
+q:"Qu'est-ce que le <strong>positionnement</strong> ?",
+a:"<p><strong>Positionnement</strong> = <em>place qu'occupe une marque/produit dans l'esprit du consommateur par rapport à la concurrence</em>. Repose sur 2 axes : <strong>différenciation</strong> + <strong>cibles</strong>. Outils : carte perceptuelle, USP (Unique Selling Proposition).</p>",
+ref:"<a href='Fiche_MSG.html#m-finalites-detail'>Fiche → D3 · Positionnement</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-valeur", kind:"restitution",
+q:"Définition de la <strong>marque</strong> ?",
+a:"<p><strong>Marque</strong> = <em>signe distinctif (nom, logo, son) qui identifie les produits/services d'une entreprise et les différencie de la concurrence</em>. Crée valeur d'identification, de réassurance et de promesse. Actif intangible.</p>",
+ref:"<a href='Fiche_MSG.html#m-valeur'>Fiche → D3 · Marque</a>"},
+
+{chap:"D3 — Intention stratégique", cmeta:"m-valeur", kind:"restitution",
+q:"Qu'est-ce que la <strong>séduction</strong> (cours valeur perçue) ?",
+a:"<p><strong>Séduction</strong> = capacité d'un produit ou d'une marque à <em>attirer émotionnellement</em> le client, au-delà de l'utilité fonctionnelle. Mobilise la <em>valeur hédonique</em> (plaisir, esthétique) et la <em>valeur de signe</em> (statut, identité).</p>",
+ref:"<a href='Fiche_MSG.html#m-valeur'>Fiche → D3 · Séduction</a>"},
+
+// === D4 — DÉCIDER (compléments) ===
+{chap:"D4 — Décider", cmeta:"m-systemique + b27", kind:"restitution",
+q:"Définition <strong>verbatim</strong> du <strong>système</strong> (Mana Exo 4).",
+a:"<p><strong>Système</strong> = <em>ensemble d'éléments en interaction dynamique, organisés en fonction d'un but, en relation avec un environnement et présentant des propriétés émergentes</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-systemique'>Fiche → D4 · Système</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-systemique", kind:"restitution",
+q:"Qu'est-ce que la <strong>théorie systémique</strong> (verbatim) ?",
+a:"<p><strong>Théorie systémique</strong> = <em>approche qui considère un objet d'étude comme un système, c'est-à-dire un tout organisé d'éléments interdépendants, en relation avec son environnement</em>. S'oppose à l'approche analytique (qui décompose en parties isolées).</p>",
+ref:"<a href='Fiche_MSG.html#m-systemique'>Fiche → D4 · Théorie systémique</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-systemique", kind:"auteur",
+q:"Que dit <strong>Martinet</strong> sur l'approche systémique en stratégie ?",
+a:"<p><strong>Alain-Charles Martinet</strong> applique l'approche systémique à la stratégie : l'entreprise est un <em>système ouvert</em> qui interagit avec son environnement. La stratégie consiste à <em>aligner</em> les ressources internes avec les opportunités/menaces externes (préfigure SWOT).</p>",
+ref:"<a href='Fiche_MSG.html#m-systemique'>Fiche → D4 · Martinet</a>"},
+
+{chap:"D4 — Décider", cmeta:"m-strattab + b30", kind:"mecanisme",
+q:"Méthode b30 : <strong>tableau des stratégies en 4 étapes</strong> (Mana Exo 4).",
+a:"<ol class='steps'><li><strong>Identifier les stratégies</strong> mises en œuvre (par DAS).</li><li><strong>Étudier la pertinence</strong> de chaque stratégie : justifier au regard du contexte (CCIP : Cohérence, Capacité, Intérêt, Pertinence).</li><li><strong>Qualifier chaque stratégie</strong> sur les 3 niveaux (corporate / business / fonctionnel) selon le tableau type.</li><li><strong>Conclure</strong> : pertinence globale du portefeuille stratégique.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b30'>Fiche → D4 · b30</a>"},
+
+// === D5 — ENVIRONNEMENT (compléments) ===
+{chap:"D5 — Environnement", cmeta:"m-offre + b10", kind:"mecanisme",
+q:"Méthode b10 : déroule l'<strong>analyse de l'offre</strong>.",
+a:"<ol class='steps'><li><strong>Identifier les concurrents</strong> directs et indirects (substituables).</li><li><strong>Qualifier la nature de l'offre</strong> : standardisée / différenciée / sur-mesure.</li><li><strong>Étudier le cycle de vie</strong> du produit : lancement / croissance / maturité / déclin.</li><li><strong>Analyser la stratégie de prix</strong> : alignement, écrémage, pénétration.</li><li><strong>Mesurer la concentration</strong> du marché (oligopole, monopole, concurrence parfaite).</li><li><strong>Conclure</strong> sur la position de l'entreprise dans l'offre globale.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b10'>Fiche → D5 · b10</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-pestel", kind:"restitution",
+q:"Donne 2 <strong>variables PESTEL</strong> par dimension (exemples).",
+a:"<ul><li><strong>P</strong>olitique : stabilité gouvernementale, politique fiscale.</li><li><strong>É</strong>conomique : taux d'intérêt, taux de change, croissance.</li><li><strong>S</strong>ocio-culturel : démographie, modes de vie, valeurs.</li><li><strong>T</strong>echnologique : R&D, brevets, taux d'adoption.</li><li><strong>É</strong>cologique : climat, raréfaction des ressources, RSE.</li><li><strong>L</strong>égal : droit du travail, droit de la concurrence, normes.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-pestel'>Fiche → D5 · PESTEL variables</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-porter", kind:"restitution",
+q:"Qu'est-ce qu'une <strong>barrière à l'entrée</strong> (Porter) ?",
+a:"<p><strong>Barrière à l'entrée</strong> = <em>obstacle qui dissuade ou empêche un nouvel acteur d'entrer sur un marché</em>. Types : économies d'échelle, image de marque, brevets, accès aux canaux de distribution, capital requis, réglementation, effets d'apprentissage.</p>",
+ref:"<a href='Fiche_MSG.html#m-porter'>Fiche → D5 · Barrières à l'entrée</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-porter", kind:"restitution",
+q:"Qu'est-ce qu'une <strong>barrière à la sortie</strong> (Porter) ?",
+a:"<p><strong>Barrière à la sortie</strong> = <em>obstacle qui rend coûteux ou difficile pour une entreprise de quitter un marché</em>. Types : actifs spécifiques, coûts sociaux (licenciements), engagements contractuels, image, interdépendances stratégiques.</p>",
+ref:"<a href='Fiche_MSG.html#m-porter'>Fiche → D5 · Barrières à la sortie</a>"},
+
+{chap:"D5 — Environnement", cmeta:"m-porter", kind:"auteur",
+q:"Qu'est-ce que la <strong>chaîne de valeur</strong> selon Porter ?",
+a:"<p><strong>Porter (1985)</strong> : la <strong>chaîne de valeur</strong> décompose l'entreprise en <em>9 activités</em> créatrices de valeur :</p><ul><li><strong>5 activités principales</strong> : logistique entrante, production, logistique sortante, marketing/vente, services.</li><li><strong>4 activités de soutien</strong> : infrastructure, GRH, R&D/technologie, achats.</li></ul><p>→ Identifier où se crée la valeur et où optimiser/externaliser.</p>",
+ref:"<a href='Fiche_MSG.html#m-porter'>Fiche → D5 · Chaîne de valeur</a>"},
+
+// === D6 — STRUCTURE (compléments lourds) ===
+{chap:"D6 — Structure", cmeta:"m-structure-caract", kind:"restitution",
+q:"Quels sont les <strong>4 critères pour caractériser une organisation</strong> ?",
+a:"<ol class='steps'><li><strong>Spécialisation</strong> — division du travail (horizontale / verticale).</li><li><strong>Coordination</strong> — comment relier les tâches (6 mécanismes Mintzberg).</li><li><strong>Formalisation</strong> — degré de formalisation des règles/procédures écrites.</li><li><strong>Centralisation / décentralisation</strong> du pouvoir et des décisions.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-structure-caract'>Fiche → D6 · 4 critères</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-caract", kind:"restitution",
+q:"Définition <strong>verbatim</strong> du <strong>pouvoir</strong> (Crozier, 1977).",
+a:"<p><strong>Crozier (1977)</strong> : <em>« Le pouvoir est la capacité d'un acteur à structurer des processus d'échange plus ou moins durables en sa faveur, en exploitant les zones d'incertitude qu'il maîtrise. »</em></p>",
+ref:"<a href='Fiche_MSG.html#m-structure-caract'>Fiche → D6 · Crozier pouvoir</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-caract", kind:"auteur",
+q:"Qu'est-ce que la <strong>théorie de l'agence</strong> (Jensen & Meckling) ?",
+a:"<p><strong>Jensen & Meckling (1976)</strong> : analyse la relation entre <strong>principal</strong> (actionnaire/propriétaire) et <strong>agent</strong> (manager/salarié). Le principal délègue à l'agent qui a ses propres intérêts → <strong>asymétrie d'information</strong> + <strong>conflits d'intérêts</strong> → <strong>coûts d'agence</strong> (surveillance, dédouanement, perte résiduelle).</p>",
+ref:"<a href='Fiche_MSG.html#m-structure-caract'>Fiche → D6 · Jensen & Meckling</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-caract", kind:"auteur",
+q:"Que dit <strong>Akerlof</strong> sur l'asymétrie d'information ?",
+a:"<p><strong>George Akerlof (1970, prix Nobel 2001)</strong> — <em>« Market for lemons »</em> : sur un marché à <em>asymétrie d'information</em> (vendeur sait, acheteur ignore), les mauvais produits chassent les bons (anti-sélection). Exemple emblématique : marché des voitures d'occasion.</p>",
+ref:"<a href='Fiche_MSG.html#m-structure-caract'>Fiche → D6 · Akerlof</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-caract", kind:"restitution",
+q:"Qu'est-ce que l'<strong>aléa moral</strong> ?",
+a:"<p><strong>Aléa moral</strong> (ou <em>moral hazard</em>) = comportement opportuniste d'un agent <em>après</em> conclusion du contrat, du fait de l'asymétrie d'information. Exemple : un assuré devient moins prudent car couvert.</p>",
+ref:"<a href='Fiche_MSG.html#m-structure-caract'>Fiche → D6 · Aléa moral</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-caract", kind:"restitution",
+q:"Cite 3 <strong>avantages de la décentralisation</strong>.",
+a:"<ol class='steps'><li><strong>Réactivité</strong> — décisions plus rapides au terrain.</li><li><strong>Motivation</strong> — autonomie, responsabilisation.</li><li><strong>Adaptation locale</strong> — meilleure prise en compte des spécificités terrain.</li><li><strong>Décharge le sommet stratégique</strong> — qui peut se concentrer sur le LT.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-structure-caract'>Fiche → D6 · Avantages décentralisation</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-configs", kind:"restitution",
+q:"Caractéristiques de la <strong>structure entrepreneuriale</strong> (Mintzberg) ?",
+a:"<ul><li>Dirigée par des <em>dirigeants créatifs / à l'esprit d'entreprise</em>.</li><li><strong>Startups</strong> gérées par leurs fondateurs.</li><li>Forces : idéaux avant-gardistes, énergie, enthousiasme.</li><li>Risques : structure limitée, mauvaise discipline des tâches, inefficacité si pas de processus définis.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-configs'>Fiche → D6 · Entrepreneuriale</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-configs", kind:"restitution",
+q:"Caractéristiques de la <strong>bureaucratie mécaniste</strong> (Mintzberg) ?",
+a:"<ul><li>Entreprises <em>plus âgées et d'une certaine taille</em>.</li><li>Standardisation des <strong>procédés de fabrication</strong>.</li><li>Composante dominante : la <strong>technostructure</strong>.</li><li>Environnement <em>stable et simple</em>.</li><li>Exemples : production de masse, travail à la chaîne.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-configs'>Fiche → D6 · Bureaucratie mécaniste</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-configs", kind:"restitution",
+q:"Caractéristiques de l'<strong>organisation divisionnalisée</strong> ?",
+a:"<ul><li><em>Très grandes entreprises</em> sur des marchés différents, éclatées en <strong>divisions autonomes</strong>.</li><li>Mécanisme = <strong>standardisation des résultats</strong>.</li><li>Composantes dominantes : <strong>sommet stratégique</strong> + <strong>ligne hiérarchique</strong>.</li><li>Décisions stratégiques centralisées, opérationnelles décentralisées.</li><li>Exemple : multinationale (Nestlé, constructeur auto avec divisions marine/industriel/voitures).</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-configs'>Fiche → D6 · Divisionnalisée</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-configs", kind:"restitution",
+q:"Caractéristiques de l'<strong>adhocratie</strong> ?",
+a:"<ul><li>Structure des <em>organisations innovatrices</em>, généralement <em>éphémères</em> (<strong>ad hoc</strong>).</li><li>Petite taille, ou éclatement par projet.</li><li>Composée de <em>spécialistes de différentes disciplines</em>.</li><li>Mécanisme = <strong>ajustement mutuel</strong>.</li><li>Travail peu formalisé.</li><li>Environnement <em>dynamique, instable et complexe</em>.</li><li>Exemple : laboratoire de recherche universitaire.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-configs'>Fiche → D6 · Adhocratie</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-configs", kind:"restitution",
+q:"Caractéristiques de l'<strong>organisation missionnaire</strong> ?",
+a:"<ul><li><strong>Idéologie</strong> (culture) définit normes et croyances.</li><li>Mécanisme = <strong>standardisation des normes</strong>.</li><li>Sens fort de la <em>mission</em>, unité d'objectif.</li><li>Peut être un <em>vernis</em> recouvrant l'une des 5 structures de base.</li><li>Décomposée en petites unités autonomes mais soumises à des contrôles normatifs.</li><li>Souvent un <em>leader charismatique</em>.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-configs'>Fiche → D6 · Missionnaire</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-structure-configs", kind:"discrimination",
+q:"Pourquoi l'<strong>organisation politisée</strong> n'est-elle pas une vraie configuration ?",
+a:"<p>Selon <strong>Mintzberg</strong>, elle doit être définie <em>en termes de pouvoir et non de structure</em>. L'analyse du conflit (modéré/intense, limité/envahissant) se substitue à l'analyse des structures. Organisation <em>en crise</em> où l'intérêt personnel prend le pas. La politisation est un <em>moyen éventuel de gérer la crise</em>.</p>",
+ref:"<a href='Fiche_MSG.html#m-structure-configs'>Fiche → D6 · Politisée</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-strat-taille", kind:"auteur",
+q:"Que dit <strong>Blau</strong> sur la taille comme facteur de contingence ?",
+a:"<p><strong>Peter Blau</strong> : plus une organisation grandit, plus elle se <strong>différencie verticalement et horizontalement</strong> (création de niveaux hiérarchiques + nouvelles spécialisations). Mais à <em>taux décroissant</em> : la différenciation marginale diminue avec la taille.</p>",
+ref:"<a href='Fiche_MSG.html#m-contingence-strat-taille'>Fiche → D6 · Blau</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-age", kind:"auteur",
+q:"Cite les <strong>5 phases de Greiner (1978)</strong> avec leur crise.",
+a:"<ol class='steps'><li><strong>Croissance par créativité</strong> → <em>crise de leadership</em>.</li><li><strong>Croissance par direction</strong> → <em>crise d'autonomie</em>.</li><li><strong>Croissance par délégation</strong> → <em>crise de contrôle</em>.</li><li><strong>Croissance par coordination</strong> → <em>crise de bureaucratie</em>.</li><li><strong>Croissance par collaboration</strong> → crise suivante (non identifiée par Greiner à l'époque).</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-contingence-age'>Fiche → D6 · Greiner</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-age", kind:"auteur",
+q:"Que dit <strong>Stinchcombe</strong> sur âge et industrie ?",
+a:"<p><strong>Arthur Stinchcombe</strong> classe les industries selon leur âge :</p><ol class='steps'><li><strong>Industries pré-1700</strong> (artisanat) — structures simples.</li><li><strong>Industries 1700-1850</strong> (révolution industrielle) — structures mécanistes.</li><li><strong>Industries 1850-1900</strong> (administration moderne) — bureaucraties.</li><li><strong>Industries post-1900</strong> (haute technologie) — adhocraties.</li></ol><p>→ Les structures s'<em>impriment</em> à l'époque de la création.</p>",
+ref:"<a href='Fiche_MSG.html#m-contingence-age'>Fiche → D6 · Stinchcombe</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-pouvoir-mode", kind:"auteur",
+q:"Que disent <strong>Samuel & Mannheim</strong> sur la mode managériale ?",
+a:"<p><strong>Samuel & Mannheim</strong> : les organisations adoptent souvent des modes (lean management, agile, holacratie, télétravail) par <strong>mimétisme institutionnel</strong> plus que par rationalité. La <em>mode</em> joue donc un rôle de contingence sur les structures, indépendant des besoins réels.</p>",
+ref:"<a href='Fiche_MSG.html#m-contingence-pouvoir-mode'>Fiche → D6 · Samuel & Mannheim</a>"},
+
+{chap:"D6 — Structure", cmeta:"m-contingence-pouvoir-mode", kind:"auteur",
+q:"Qu'est-ce que l'<strong>isomorphisme institutionnel</strong> (DiMaggio & Powell) ?",
+a:"<p><strong>DiMaggio & Powell (1983)</strong> : les organisations d'un même champ tendent à se <strong>ressembler</strong> au cours du temps. 3 mécanismes d'isomorphisme :</p><ol class='steps'><li><strong>Coercitif</strong> — pressions réglementaires.</li><li><strong>Mimétique</strong> — imitation des leaders en cas d'incertitude.</li><li><strong>Normatif</strong> — diffusion par les formations, associations professionnelles.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-contingence-pouvoir-mode'>Fiche → D6 · DiMaggio & Powell</a>"},
+
+// === D7 — RESSOURCES & COMPÉTENCES (compléments) ===
+{chap:"D7 — Ressources & compétences", cmeta:"m-ressources", kind:"mecanisme",
+q:"Méthode b15 : <strong>diagnostic des ressources</strong> (Penrose).",
+a:"<ol class='steps'><li><strong>Lister</strong> toutes les ressources : tangibles (humaines, financières, physiques) + intangibles (savoir-faire, marque, brevets, culture).</li><li><strong>Identifier les ressources stratégiques</strong> : celles qui contribuent à l'avantage concurrentiel.</li><li><strong>Évaluer chaque ressource avec VRIN</strong> (Valeur, Rareté, Inimitabilité, Non-substituabilité).</li><li>Distinguer ressources <strong>en propre</strong> de l'entreprise vs <strong>mobilisables</strong> chez partenaires.</li><li><strong>Conclure</strong> sur la solidité du portefeuille de ressources.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b15'>Fiche → D7 · b15</a>"},
+
+{chap:"D7 — Ressources & compétences", cmeta:"m-competences", kind:"restitution",
+q:"Différence entre <strong>VRIN</strong> et <strong>VRIO</strong> ?",
+a:"<ul><li><strong>VRIN</strong> (Barney 1991, ressources) : <em>Valeur, Rareté, Inimitabilité, Non-substituabilité</em>.</li><li><strong>VRIO</strong> (Barney 1995, compétences) : remplace le N par <strong>O = Organisationnel</strong> = capacité de l'organisation à <em>mobiliser</em> la compétence/ressource.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-competences'>Fiche → D7 · VRIN/VRIO</a>"},
+
+// === AUTEURS TRANSVERSAUX (compléments) ===
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Qu'est-ce que la <strong>destruction créatrice</strong> de Schumpeter ?",
+a:"<p><strong>Joseph Schumpeter</strong> : processus par lequel les <strong>innovations</strong> portées par les entrepreneurs <em>détruisent</em> les anciennes structures économiques (entreprises, emplois, technologies) et <em>en créent</em> de nouvelles. C'est le moteur de la dynamique capitaliste.</p>",
+ref:"<a href='Fiche_MSG.html#m-entrepreneur'>Fiche → D2 · Schumpeter</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Lawrence & Lorsch</strong> sur la différenciation/intégration ?",
+a:"<p><strong>Lawrence & Lorsch (1967)</strong> : plus l'environnement est <em>complexe et incertain</em>, plus l'organisation se <strong>différencie</strong> (services aux logiques différentes). Mais elle doit alors développer des <em>mécanismes d'<strong>intégration</strong></em> (comités, postes de liaison) pour maintenir la cohérence.</p>",
+ref:"<a href='Fiche_MSG.html#m-contingence-env'>Fiche → D6 · Lawrence & Lorsch</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Williamson</strong> sur les coûts de transaction ?",
+a:"<p><strong>Oliver Williamson (1975, prix Nobel 2009)</strong> : les <strong>coûts de transaction</strong> (recherche d'info, négociation, contrôle, exécution des contrats) déterminent le choix entre <em>« faire »</em> (intégration verticale interne) ou <em>« faire faire »</em> (marché / externalisation). 3 facteurs : actifs spécifiques, incertitude, fréquence.</p>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Williamson</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Coase</strong> sur la nature de la firme ?",
+a:"<p><strong>Ronald Coase (1937, prix Nobel 1991)</strong> — <em>« La nature de la firme »</em> : l'entreprise existe parce que le marché a des <strong>coûts de transaction</strong>. Quand ces coûts sont supérieurs aux coûts d'organisation interne, on internalise dans la firme. Sinon on passe par le marché.</p>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Coase 1937</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Chesbrough</strong> sur l'open innovation ?",
+a:"<p><strong>Henry Chesbrough (2003)</strong> — <strong>open innovation</strong> : l'innovation doit s'<em>ouvrir</em> au-delà des frontières de l'entreprise — partenariats, start-ups, universités, communautés. S'oppose à la R&D fermée traditionnelle. Logique <em>« inbound »</em> (intégrer l'externe) + <em>« outbound »</em> (céder les innovations non exploitées).</p>",
+ref:"<a href='Fiche_MSG.html#m-innov'>Fiche → D2 · Chesbrough</a>"},
+
+{chap:"Auteurs transversaux", cmeta:"Récap théoriciens majeurs", kind:"auteur",
+q:"Que dit <strong>Argyris & Schön</strong> sur l'apprentissage organisationnel ?",
+a:"<p><strong>Argyris & Schön (1978)</strong> distinguent :</p><ul><li><strong>Apprentissage en simple boucle</strong> — correction des erreurs sans remettre en cause les routines.</li><li><strong>Apprentissage en double boucle</strong> — remise en cause des valeurs et schémas mentaux qui ont conduit à l'erreur. Plus profond, plus rare.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-int-collective'>Fiche → D1 · Argyris & Schön</a>"},
+
+// === MÉTHODES OUBLIÉES — couverture complète ===
+{chap:"Méthodes — couverture complète", cmeta:"b22 — McKinsey 3×3", kind:"mecanisme",
+q:"Méthode b22 : <strong>analyser un DAS avec la matrice McKinsey 3×3</strong>.",
+a:"<ol class='steps'><li><strong>Mesurer l'attractivité</strong> du marché : taux de croissance, taille, intensité concurrentielle, accessibilité.</li><li><strong>Mesurer les atouts</strong> de l'entreprise : part de marché, ressources/compétences, image, prix relatif.</li><li><strong>Positionner</strong> chaque DAS dans une des 9 cases.</li><li><strong>Recommandation</strong> par zone :<ul><li><em>Zone verte</em> (3 cases haut-gauche) → <strong>investir / développer</strong>.</li><li><em>Zone jaune</em> (3 cases diagonale) → <strong>sélectivité, maintenir</strong>.</li><li><em>Zone rouge</em> (3 cases bas-droite) → <strong>désinvestir / récolter</strong>.</li></ul></li></ol>",
+ref:"<a href='Fiche_MSG.html#b22'>Fiche → D4 · b22</a>"},
+
+{chap:"Méthodes — couverture complète", cmeta:"b29 — Mintzberg délibérée/émergente", kind:"mecanisme",
+q:"Méthode b29 : <strong>qualifier une stratégie</strong> de délibérée vs émergente (Mintzberg).",
+a:"<ol class='steps'><li><strong>Repérer la stratégie planifiée</strong> annoncée par la direction (plan stratégique, vision).</li><li><strong>Observer la stratégie réalisée</strong> = ce qui a été effectivement mis en œuvre.</li><li>Si <strong>réalisée = planifiée</strong> → <em>stratégie délibérée</em>.</li><li>Si <strong>réalisée ≠ planifiée</strong>, comprendre pourquoi : adaptation à l'environnement, initiatives terrain → <em>stratégie émergente</em>.</li><li><strong>Conclure</strong> : la stratégie réelle est souvent un <em>mix</em> des deux (stratégie réalisée).</li></ol>",
+ref:"<a href='Fiche_MSG.html#b29'>Fiche → D4 · b29</a>"},
+
+{chap:"Méthodes — couverture complète", cmeta:"b33 — Facteurs de contingence", kind:"mecanisme",
+q:"Méthode b33 : <strong>analyser les facteurs de contingence</strong> d'une organisation.",
+a:"<ol class='steps'><li><strong>Identifier la stratégie</strong> et son évolution (Chandler).</li><li><strong>Mesurer la taille</strong> (Blau) — nb de salariés, CA, sites.</li><li><strong>Repérer l'âge</strong> et le stade de croissance (Greiner, Stinchcombe).</li><li><strong>Caractériser la technologie</strong> (Woodward — production unitaire/masse/continue).</li><li><strong>Analyser l'environnement</strong> (Burns & Stalker — stable/instable ; Lawrence & Lorsch — différenciation/intégration).</li><li><strong>Étudier le pouvoir et les modes managériales</strong> (Crozier, Samuel & Mannheim, DiMaggio & Powell).</li><li><strong>Conclure</strong> sur l'adéquation structure/facteurs et les évolutions à prévoir.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b33'>Fiche → D6 · b33</a>"},
+
+{chap:"Méthodes — couverture complète", cmeta:"b36 — Structure réseau", kind:"mecanisme",
+q:"Méthode b36 : <strong>analyser une structure en réseau</strong> (cas Decathlon).",
+a:"<ol class='steps'><li><strong>Identifier l'entreprise pivot</strong> et les <strong>nœuds</strong> (partenaires).</li><li><strong>Définir les relations</strong> : contrats + relation de confiance (Coase).</li><li><strong>Analyser la chaîne de valeur</strong> et la <strong>captation de valeur</strong> par le pivot.</li><li><strong>Repérer la dépendance bilatérale</strong> (Pfeffer & Salancik) et la <strong>dépendance de sentier</strong> (P. David).</li><li><strong>Évaluer les coûts de transaction</strong> (Williamson) qui justifient le réseau plutôt que l'intégration.</li><li><strong>Identifier les pièges</strong> : technocentre ≠ technostructure ; qualité globale ≠ totale.</li></ol>",
+ref:"<a href='Fiche_MSG.html#b36'>Fiche → D6 · b36</a>"},
+
+// === SYNTHÈSES & APPLICATIONS (compléments) ===
+{chap:"Synthèses transversales", cmeta:"Application transversale", kind:"application",
+q:"Application : <strong>cas Renault Technocentre</strong> — identifier les composantes Mintzberg.",
+a:"<p>Le <strong>Technocentre Renault</strong> regroupe 9 entités : Avancée, Roche, Proto, Labo, Usine, Centrale, Diapason, Pluton, Gradient. À répartir dans les <strong>5 composantes Mintzberg</strong> :</p><ul><li><strong>Centre opérationnel</strong> : Usine (production), Proto (prototypes).</li><li><strong>Technostructure</strong> : Labo (méthodes), Avancée (R&D process).</li><li><strong>Support logistique</strong> : Centrale, Diapason, Pluton, Gradient.</li><li><strong>Ligne hiérarchique</strong> : management intermédiaire (non explicite).</li><li><strong>Sommet stratégique</strong> : direction du Technocentre.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-composantes'>Fiche → D6 · Renault</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Application transversale", kind:"application",
+q:"Application : <strong>cas Guédelon</strong> (chantier château 13e siècle).",
+a:"<p><strong>Guédelon</strong> = chantier de construction d'un château fort selon les techniques du XIII<sup>e</sup>. Analyse :</p><ul><li><strong>Centre opérationnel</strong> dominant (tailleurs de pierre, charpentiers, forgerons) — <em>artisans qualifiés</em>.</li><li>Mécanisme = <strong>standardisation des qualifications</strong> (formation longue, savoir-faire ancestral).</li><li><strong>Caractéristique</strong> : organisation proche de la <em>bureaucratie professionnelle</em> (savoir-faire) ou <em>missionnaire</em> (idéologie de la reconstitution historique).</li><li>Pas de centralisation forte, ajustement mutuel sur le chantier.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-structure-composantes'>Fiche → D6 · Guédelon</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Application transversale", kind:"application",
+q:"Application : <strong>cas Astera</strong> — quels mécanismes de coordination ?",
+a:"<p><strong>Astera</strong> (Sit 2-10) — coopérative de pharmaciens. Mécanismes typiques :</p><ul><li><strong>Standardisation des qualifications</strong> (diplôme pharmacie obligatoire).</li><li><strong>Standardisation des normes</strong> (code de déontologie pharmaceutique).</li><li><strong>Ajustement mutuel</strong> entre coopérateurs (gouvernance partagée).</li><li><strong>Standardisation des procédés</strong> (chaîne logistique, gestion des stocks).</li></ul><p>→ Structure <strong>hybride</strong> entre bureaucratie professionnelle et adhocratie.</p>",
+ref:"<a href='Fiche_MSG.html#m-structure-meca'>Fiche → D6 · Astera</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Application transversale", kind:"application",
+q:"Application : <strong>cas Decathlon</strong> — pourquoi une structure réseau ?",
+a:"<ul><li><strong>Entreprise pivot</strong> = Decathlon (marque, design, distribution).</li><li><strong>Nœuds</strong> = sous-traitants asiatiques (production), distributeurs locaux, partenaires logistiques.</li><li><strong>Justification</strong> : <em>flexibilité, coûts réduits (Williamson — coûts de transaction)</em>, focalisation sur le cœur de métier (design + marque).</li><li><strong>Captation de la valeur</strong> par Decathlon (marges sur marques propres : Quechua, Domyos…).</li><li><strong>Risques</strong> : dépendance des partenaires, image RSE (conditions de travail des sous-traitants).</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Decathlon</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Application transversale", kind:"application",
+q:"Application : <strong>cas Michelin</strong> (Sit 10) — composantes + 4 facteurs de contingence.",
+a:"<p><strong>Composantes</strong> : structure <strong>matricielle</strong> (lignes produits × zones géographiques) — toutes les composantes Mintzberg développées. <strong>4 facteurs de contingence</strong> :</p><ol class='steps'><li><strong>Stratégie</strong> (Chandler) — diversification géographique + produits.</li><li><strong>Taille</strong> (Blau) — multinationale, forte différenciation.</li><li><strong>Technologie</strong> (Woodward) — production de masse, ligne hiérarchique longue.</li><li><strong>Environnement</strong> (Burns & Stalker) — concurrence mondiale, structure plus organique aux marges (innovation pneu auto-régénérant).</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-structure-composantes'>Fiche → D6 · Michelin</a>"},
+
+{chap:"Synthèses transversales", cmeta:"Application transversale", kind:"application",
+q:"Application : <strong>cas Habitat</strong> — analyse différentielle après charges.",
+a:"<p><strong>Habitat</strong> — analyse différentielle :</p><ol class='steps'><li>Calculer la <strong>MSCV</strong> = CA − CV (marge sur coût variable).</li><li>Calculer la <strong>DAP</strong> = MSCV − CF directes (dotation aux amortissements provisions, charges fixes spécifiques).</li><li>Calculer le <strong>R⁺ après charges</strong> = DAP − CF communes réparties.</li><li>Comparer entre les <em>DAS</em> ou entre les <em>périodes</em> pour identifier les sources de profitabilité.</li></ol>",
+ref:"<a href='Fiche_MSG.html#m-perf'>Fiche → D2 · Habitat</a>"},
+
+// === COMPLÉMENTS — Définitions auteurs détaillées ===
+{chap:"Définitions auteurs", cmeta:"Théoriciens fondateurs", kind:"auteur",
+q:"Que dit <strong>Igor Ansoff</strong> sur la matrice produits-marchés ?",
+a:"<p><strong>Ansoff (1957)</strong> propose une matrice <strong>2×2</strong> avec 4 stratégies de croissance :</p><table style='width:100%;border-collapse:collapse;margin-top:8px;'><tr><th></th><th>Produit existant</th><th>Produit nouveau</th></tr><tr><td><strong>Marché existant</strong></td><td>Pénétration</td><td>Développement produit</td></tr><tr><td><strong>Marché nouveau</strong></td><td>Développement marché</td><td>Diversification</td></tr></table>",
+ref:"<a href='Fiche_MSG.html#m-finalites-detail'>Fiche → D3 · Ansoff matrice</a>"},
+
+{chap:"Définitions auteurs", cmeta:"Théoriciens fondateurs", kind:"auteur",
+q:"Que dit <strong>Mintzberg</strong> sur les <strong>10 rôles du manager</strong> ?",
+a:"<p><strong>Mintzberg (1973)</strong> classe les rôles du manager en 3 catégories :</p><ul><li><strong>Rôles interpersonnels</strong> (3) : symbole, leader, agent de liaison.</li><li><strong>Rôles informationnels</strong> (3) : observateur actif, diffuseur, porte-parole.</li><li><strong>Rôles décisionnels</strong> (4) : entrepreneur, régulateur, répartiteur de ressources, négociateur.</li></ul>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-auteurs'>Fiche Auteurs → Mintzberg</a>"},
+
+{chap:"Définitions auteurs", cmeta:"Théoriciens fondateurs", kind:"auteur",
+q:"Qu'est-ce que la <strong>théorie X et Y</strong> de McGregor ?",
+a:"<p><strong>Douglas McGregor (1960)</strong> :</p><ul><li><strong>Théorie X</strong> : les salariés sont <em>paresseux, sans ambition, fuient la responsabilité</em>. Doivent être <em>contrôlés et contraints</em>. Management directif.</li><li><strong>Théorie Y</strong> : les salariés sont <em>motivés, créatifs, cherchent les responsabilités</em>. Management participatif. Plus efficace selon McGregor.</li></ul>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-mgmt'>Fiche Auteurs → McGregor</a>"},
+
+{chap:"Définitions auteurs", cmeta:"Théoriciens fondateurs", kind:"auteur",
+q:"Que dit <strong>Mayo</strong> avec l'expérience d'Hawthorne ?",
+a:"<p><strong>Elton Mayo (années 1920-30)</strong> — <em>études Hawthorne</em> chez Western Electric : la productivité augmente quand on porte attention aux ouvriers, <em>indépendamment</em> des conditions matérielles. Découverte du <strong>« facteur humain »</strong> et naissance de l'<strong>école des relations humaines</strong>.</p>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-mgmt'>Fiche Auteurs → Mayo</a>"},
+
+{chap:"Définitions auteurs", cmeta:"Théoriciens fondateurs", kind:"auteur",
+q:"Qu'est-ce que la <strong>pyramide de Maslow</strong> (5 niveaux) ?",
+a:"<p><strong>Abraham Maslow (1943)</strong> — les besoins humains sont hiérarchisés :</p><ol class='steps'><li><strong>Besoins physiologiques</strong> (manger, boire, dormir).</li><li><strong>Besoins de sécurité</strong> (logement, emploi).</li><li><strong>Besoins d'appartenance</strong> (famille, groupe).</li><li><strong>Besoins d'estime</strong> (reconnaissance).</li><li><strong>Besoins d'accomplissement</strong> (réalisation de soi).</li></ol><p>→ Un besoin n'apparaît que si le précédent est satisfait.</p>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-mgmt'>Fiche Auteurs → Maslow</a>"},
+
+{chap:"Définitions auteurs", cmeta:"Théoriciens fondateurs", kind:"auteur",
+q:"Qu'est-ce que la <strong>théorie des 2 facteurs</strong> de Herzberg ?",
+a:"<p><strong>Frederick Herzberg (1959)</strong> distingue 2 types de facteurs :</p><ul><li><strong>Facteurs d'hygiène</strong> (salaire, conditions de travail, sécurité) — leur absence cause de l'insatisfaction, mais leur présence ne motive pas.</li><li><strong>Facteurs moteurs</strong> (reconnaissance, responsabilité, accomplissement) — sources de <em>motivation</em> et de satisfaction durable.</li></ul>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-mgmt'>Fiche Auteurs → Herzberg</a>"},
+
+{chap:"Définitions auteurs", cmeta:"Théoriciens fondateurs", kind:"auteur",
+q:"Qu'est-ce que la <strong>RSE</strong> selon Bowen ?",
+a:"<p><strong>Howard Bowen (1953)</strong>, considéré comme le père de la <strong>RSE</strong> moderne : la <em>responsabilité sociale des entreprises</em> est <em>« l'obligation qu'ont les hommes d'affaires de poursuivre les politiques, prendre les décisions et suivre les lignes de conduite qui sont désirables en regard des objectifs et valeurs reconnus par notre société »</em>.</p>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-auteurs'>Fiche Auteurs → Bowen</a>"},
+
+{chap:"Définitions auteurs", cmeta:"Théoriciens fondateurs", kind:"auteur",
+q:"Qu'est-ce que la <strong>théorie des parties prenantes</strong> (Freeman) ?",
+a:"<p><strong>Edward Freeman (1984)</strong> : l'entreprise doit gérer ses relations avec l'<em>ensemble de ses parties prenantes (stakeholders)</em> — actionnaires, salariés, clients, fournisseurs, État, ONG, communauté locale — pas uniquement les actionnaires (<em>shareholders</em>). Vision élargie de la responsabilité d'entreprise.</p>",
+ref:"<a href='Fiche_MSG_Auteurs.html#m-auteurs'>Fiche Auteurs → Freeman</a>"},
+
+// === Notions transversales supplémentaires ===
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce qu'une <strong>partie prenante</strong> (stakeholder) ?",
+a:"<p><strong>Partie prenante</strong> = <em>tout individu ou groupe qui peut affecter ou être affecté par la réalisation des objectifs de l'entreprise</em> (Freeman, 1984). Internes : actionnaires, dirigeants, salariés. Externes : clients, fournisseurs, État, ONG, communauté, médias.</p>",
+ref:"<a href='Fiche_MSG.html#m-rse'>Fiche → D3 · Partie prenante</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>avantage concurrentiel</strong> ?",
+a:"<p><strong>Avantage concurrentiel</strong> = <em>position privilégiée d'une entreprise par rapport à ses concurrents, lui permettant d'obtenir une rentabilité supérieure à la moyenne du secteur</em>. Sources (Porter) : domination par les coûts, différenciation, focalisation. <strong>Durable</strong> si protégé par VRIN (Barney).</p>",
+ref:"<a href='Fiche_MSG.html#m-vrin'>Fiche → D5 · Avantage concurrentiel</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"discrimination",
+q:"Différence entre <strong>diversification liée</strong> et <strong>diversification conglomérale</strong> ?",
+a:"<ul><li><strong>Diversification liée</strong> = nouveau métier qui <em>partage des ressources/compétences/marchés</em> avec l'activité existante (synergies). Ex : Coca-Cola → boissons en bouteille.</li><li><strong>Diversification conglomérale</strong> = nouveau métier <em>sans lien</em> avec l'existant (logique financière, étalement des risques). Ex : Bouygues → BTP + médias + télécoms.</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-das'>Fiche → D3 · Diversification</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce que la <strong>stratégie de domination par les coûts</strong> (Porter) ?",
+a:"<p>Stratégie consistant à <strong>obtenir un coût unitaire inférieur</strong> à celui des concurrents (économies d'échelle, effet d'expérience, optimisation), permettant de pratiquer un <em>prix bas</em> tout en conservant des marges. Risques : guerre des prix, imitation, baisse de qualité perçue.</p>",
+ref:"<a href='Fiche_MSG.html#m-strat3'>Fiche → D4 · Domination coûts</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce que la <strong>stratégie de différenciation</strong> (Porter) ?",
+a:"<p>Stratégie consistant à <strong>proposer une offre perçue comme unique</strong> par le client (qualité, design, marque, service, innovation), justifiant un <em>prix premium</em>. Sources : différenciation par le haut (luxe) ou par le bas (low cost original).</p>",
+ref:"<a href='Fiche_MSG.html#m-strat3'>Fiche → D4 · Différenciation</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce que la <strong>stratégie de focalisation / niche</strong> (Porter) ?",
+a:"<p><strong>Focalisation</strong> = concentrer ses efforts sur un <em>segment étroit</em> du marché (cible géographique, démographique, produit). Peut être combinée avec la domination par les coûts (focalisation low-cost) ou la différenciation (focalisation premium). Avantage : profondeur de l'expertise. Risque : marché trop étroit.</p>",
+ref:"<a href='Fiche_MSG.html#m-strat3'>Fiche → D4 · Focalisation</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce qu'une <strong>fusion-acquisition (F&A)</strong> ?",
+a:"<p><strong>Fusion</strong> = 2 entreprises se regroupent en une nouvelle entité. <strong>Acquisition</strong> = une entreprise rachète l'autre (prise de contrôle). Buts : <em>croissance externe rapide, accès à des ressources/marchés, synergies, élimination d'un concurrent</em>. Risques : choc des cultures, intégration ratée.</p>",
+ref:"<a href='Fiche_MSG.html#m-das'>Fiche → D3 · F&A</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce qu'une <strong>joint-venture</strong> ?",
+a:"<p><strong>Joint-venture</strong> (coentreprise) = <em>création d'une entité commune par 2 ou plusieurs entreprises partenaires</em>, qui mutualisent leurs ressources pour un projet précis. Avantages : partage des risques et coûts, complémentarité. Inconvénients : gouvernance complexe, possibles conflits stratégiques.</p>",
+ref:"<a href='Fiche_MSG.html#m-das'>Fiche → D3 · Joint-venture</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce que l'<strong>externalisation (outsourcing)</strong> ?",
+a:"<p><strong>Externalisation</strong> = <em>confier à un prestataire externe une activité auparavant réalisée en interne</em>. Logique : se recentrer sur le cœur de métier, réduire les coûts (Williamson), bénéficier de l'expertise externe. Risques : perte de savoir-faire, dépendance, qualité, image RSE.</p>",
+ref:"<a href='Fiche_MSG.html#m-reseau'>Fiche → D6 · Externalisation</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>spin-off</strong> ?",
+a:"<p><strong>Spin-off</strong> = <em>création d'une nouvelle entreprise indépendante à partir d'une activité d'une entreprise existante</em>. La maison-mère se sépare d'une activité (souvent secondaire ou différente du cœur de métier). Permet à la nouvelle entité de se développer avec sa propre logique. Exemple : PayPal sorti d'eBay.</p>",
+ref:"<a href='Fiche_MSG.html#m-entrepreneur'>Fiche → D2 · Spin-off</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"discrimination",
+q:"Différence entre <strong>start-up</strong> et <strong>scale-up</strong> ?",
+a:"<ul><li><strong>Start-up</strong> = jeune entreprise innovante en phase d'<em>amorçage / recherche de modèle économique viable</em>. Croissance rapide visée mais non encore prouvée.</li><li><strong>Scale-up</strong> = start-up qui a <em>validé son modèle</em> et entre en phase d'<em>hypercroissance</em> (+30 %/an pendant 3 ans selon UE).</li></ul>",
+ref:"<a href='Fiche_MSG.html#m-croissance'>Fiche → D3 · Start-up/Scale-up</a>"},
+
+{chap:"Notions transversales", cmeta:"Vocabulaire stratégique", kind:"restitution",
+q:"Qu'est-ce qu'un <strong>FCS (Facteur Clé de Succès)</strong> ?",
+a:"<p><strong>FCS</strong> = <em>élément que toute entreprise du secteur doit maîtriser pour réussir</em>. Identifié à partir des forces de Porter. Exemples : pour le luxe = image de marque ; pour le low cost = maîtrise des coûts ; pour le digital = maîtrise des data.</p>",
+ref:"<a href='Fiche_MSG.html#b35'>Fiche → D5 · FCS</a>"}
+
+
+];
+
+
+// ---------------------------------------------------------------
+// ÉTAT DE SESSION
+// ---------------------------------------------------------------
+const state = {};            // index -> 'su' | 'rev' | undefined
+let currentFilter = 'all';
+
+// ---------------------------------------------------------------
+// CONSTRUCTION DU QUIZ
+// ---------------------------------------------------------------
+const container = document.getElementById('quiz-container');
+const emptyMsg = document.getElementById('empty-msg');
+
+function buildQuiz(){
+  // Grouper par chapitre
+  const groups = {};
+  QUESTIONS.forEach((q, idx) => {
+    const key = q.chap;
+    if(!groups[key]) groups[key] = [];
+    groups[key].push({...q, idx});
+  });
+  let html = '';
+  Object.keys(groups).forEach(chap => {
+    const cmeta = groups[chap][0].cmeta || '';
+    html += `<div class="chap-group" data-chap="${chap}">`;
+    html += `<h3>${chap}</h3>`;
+    if(cmeta) html += `<div class="cm">${cmeta}</div>`;
+    groups[chap].forEach(q => {
+      html += `<div class="qcard" data-idx="${q.idx}" data-kind="${q.kind}">`;
+      html += `<div class="qh">`;
+      html += `<span class="kind-tag ${q.kind}">${q.kind}</span>`;
+      html += `<div class="q">${q.q}</div>`;
+      html += `</div>`;
+      if(q.cmeta && q.cmeta !== cmeta) html += `<div class="qmeta">${q.cmeta}</div>`;
+      html += `<div class="answer">${q.a}<div class="ref">${q.ref}</div></div>`;
+      html += `<div class="actions">`;
+      html += `<button class="se-btn show">Voir la réponse</button>`;
+      html += `<button class="se-btn su">Su ✓</button>`;
+      html += `<button class="se-btn rev">À revoir</button>`;
+      html += `<span class="se-state"></span>`;
+      html += `</div>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+  attachListeners();
+}
+
+function attachListeners(){
+  document.querySelectorAll('.qcard').forEach(card => {
+    const idx = card.dataset.idx;
+    const showBtn = card.querySelector('.se-btn.show');
+    const suBtn = card.querySelector('.se-btn.su');
+    const revBtn = card.querySelector('.se-btn.rev');
+    const seState = card.querySelector('.se-state');
+
+    showBtn.addEventListener('click', () => {
+      card.classList.toggle('open');
+      showBtn.textContent = card.classList.contains('open') ? 'Masquer' : 'Voir la réponse';
+    });
+    suBtn.addEventListener('click', () => {
+      if(state[idx] === 'su'){delete state[idx];}
+      else{state[idx] = 'su';}
+      refreshCard(card, idx, seState, suBtn, revBtn);
+      updateScore();
+      applyFilter();
+    });
+    revBtn.addEventListener('click', () => {
+      if(state[idx] === 'rev'){delete state[idx];}
+      else{state[idx] = 'rev';}
+      refreshCard(card, idx, seState, suBtn, revBtn);
+      updateScore();
+      applyFilter();
+    });
+  });
+}
+
+function refreshCard(card, idx, seState, suBtn, revBtn){
+  card.classList.remove('is-su','is-rev');
+  suBtn.classList.remove('active');
+  revBtn.classList.remove('active');
+  if(state[idx] === 'su'){
+    card.classList.add('is-su');
+    suBtn.classList.add('active');
+    seState.textContent = '✓ Sue';
+  } else if(state[idx] === 'rev'){
+    card.classList.add('is-rev');
+    revBtn.classList.add('active');
+    seState.textContent = '↻ À revoir';
+  } else {
+    seState.textContent = '';
+  }
+}
+
+function updateScore(){
+  const tot = QUESTIONS.length;
+  let su = 0, rev = 0;
+  Object.values(state).forEach(v => {
+    if(v === 'su') su++;
+    if(v === 'rev') rev++;
+  });
+  const rest = tot - su - rev;
+  document.getElementById('st-su').textContent = su;
+  document.getElementById('st-rev').textContent = rev;
+  document.getElementById('st-rest').textContent = rest;
+  document.getElementById('st-tot').textContent = tot;
+  document.getElementById('pf-su').style.width = (su/tot*100) + '%';
+  document.getElementById('pf-rev').style.width = (rev/tot*100) + '%';
+}
+
+function applyFilter(){
+  let visible = 0;
+  document.querySelectorAll('.qcard').forEach(card=>{
+    const idx = card.dataset.idx;
+    const kind = card.dataset.kind;
+    const st = state[idx];
+    let show = false;
+    if(currentFilter === 'all') show = true;
+    else if(currentFilter === 'rev') show = (st === 'rev');
+    else if(currentFilter === 'rest') show = !st;
+    else show = (kind === currentFilter);
+    card.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  document.querySelectorAll('.chap-group').forEach(g=>{
+    const anyVisible = Array.from(g.querySelectorAll('.qcard'))
+      .some(c=>c.style.display !== 'none');
+    g.style.display = anyVisible ? '' : 'none';
+  });
+  emptyMsg.style.display = visible === 0 ? '' : 'none';
+}
+
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFilter = chip.dataset.filter;
+    applyFilter();
+  });
+});
+
+document.getElementById('reset-btn').addEventListener('click', ()=>{
+  Object.keys(state).forEach(k=>delete state[k]);
+  document.querySelectorAll('.qcard').forEach(card=>{
+    const idx = card.dataset.idx;
+    card.classList.remove('is-su','is-rev','open');
+    const seState = card.querySelector('.se-state');
+    const btnSu = card.querySelector('.se-btn.su');
+    const btnRev = card.querySelector('.se-btn.rev');
+    const showBtn = card.querySelector('.se-btn.show');
+    refreshCard(card, idx, seState, btnSu, btnRev);
+    showBtn.textContent = 'Voir la réponse';
+  });
+  updateScore();
+  applyFilter();
+});
+
+document.getElementById('qcount-meta').innerHTML = 'Questions <b>' + QUESTIONS.length + '</b>';
+buildQuiz();
+updateScore();
+</script>
+
+</body>
+</html>

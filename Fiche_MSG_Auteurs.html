@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiche MSG Auteurs &amp; Fonctions — CPGE ECT1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* === PALETTE MSG (conservée à l'identique) === */
+  --bg:#0f0f12;
+  --bg2:#13131a;
+  --surface:#18181f;
+  --surface2:#1e1e28;
+  --card:#1e1e28;
+  --card2:#222834;
+  --ink:#e8e6f0;
+  --ink-soft:#b3b9c6;
+  --ink-dim:#9896a8;
+  --line:#2a2a38;
+  --line-soft:#22222e;
+
+  /* === Couleurs sémantiques MSG re-mappées sur la grammaire droit/éco === */
+  /* méthode / mécanisme procédural — turquoise --a3 */
+  --mec:#4ecdc4;
+  --mec-bg:rgba(78,205,196,.08);
+  --mec-line:rgba(78,205,196,.32);
+
+  /* définition verbatim — violet --a1 */
+  --def:#6c63ff;
+  --def-bg:rgba(108,99,255,.08);
+  --def-line:rgba(108,99,255,.32);
+
+  /* auteur / doctrine — rose --a2 */
+  --aut:#ff6b8a;
+  --aut-bg:rgba(255,107,138,.08);
+  --aut-line:rgba(255,107,138,.30);
+
+  /* piège / débat — ambre --a4 */
+  --piege:#ffd166;
+  --piege-bg:rgba(255,209,102,.08);
+  --piege-line:rgba(255,209,102,.32);
+
+  /* fait / cas pratique — violet clair --a5 */
+  --fait:#a78bfa;
+  --fait-bg:rgba(167,139,250,.08);
+  --fait-line:rgba(167,139,250,.30);
+
+  /* donnée / repère / date — bleu */
+  --dat:#60a5fa;
+  --dat-bg:rgba(96,165,250,.09);
+  --dat-line:rgba(96,165,250,.32);
+
+  /* conclusion / synthèse — ink soft sur fond carte */
+  --co:#9896a8;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;word-break:break-word;overflow-wrap:anywhere;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{overflow-x:hidden;}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(108,99,255,.07), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(78,205,196,.05), transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font-family:'Source Sans 3',system-ui,sans-serif;
+  font-size:15.5px;
+  line-height:1.62;
+  padding:0 0 120px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- LAYOUT (aligné droit/éco) ---------- */
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 26px;}
+.layout{display:grid;grid-template-columns:248px 1fr;gap:42px;align-items:start;}
+.layout>*{min-width:0;overflow-x:hidden;}
+
+/* ---------- HEADER ---------- */
+header.top{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(108,99,255,.06),transparent);
+  padding:46px 0 30px;
+  margin-bottom:38px;
+}
+header.top .wrap{display:flex;flex-direction:column;gap:14px;}
+.kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--mec);
+}
+h1.title{
+  font-family:'Playfair Display',serif;
+  font-size:46px;line-height:1.05;font-weight:800;
+  letter-spacing:-.5px;
+}
+h1.title em{font-style:italic;color:var(--def);}
+.subtitle{color:var(--ink-soft);max-width:720px;font-size:15px;}
+.meta-row{
+  display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+}
+.meta-row span{
+  border:1px solid var(--line);border-radius:999px;
+  padding:4px 11px;color:var(--ink-dim);
+}
+.meta-row span b{color:var(--ink-soft);font-weight:600;}
+
+/* ---------- NAV ---------- */
+nav.toc{
+  position:sticky;top:18px;
+  border:1px solid var(--line);border-radius:14px;
+  background:var(--surface);padding:18px 16px;
+  font-size:13px;
+}
+nav.toc h6{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.18em;
+  margin-bottom:12px;font-weight:600;
+}
+nav.toc a{
+  display:block;color:var(--ink-soft);text-decoration:none;
+  padding:5px 8px;border-radius:6px;line-height:1.35;
+}
+nav.toc a:hover{background:var(--surface2);color:var(--ink);}
+nav.toc a.theme{
+  font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--ink);
+  margin-top:14px;padding:6px 8px;
+  border-left:3px solid var(--def);
+}
+nav.toc a.theme:first-of-type{margin-top:0;}
+nav.toc a.theme.d1{border-color:var(--mec);}
+nav.toc a.theme.d2{border-color:var(--def);}
+nav.toc a.theme.d3{border-color:var(--aut);}
+nav.toc a.theme.d4{border-color:var(--piege);}
+nav.toc a.theme.d5{border-color:var(--mec);}
+nav.toc a.theme.d6{border-color:var(--fait);}
+nav.toc a.theme.d7{border-color:var(--piege);}
+nav.toc a.theme.tr{border-color:var(--ink-soft);}
+nav.toc a.sub{padding-left:18px;font-size:12.5px;}
+nav.toc a.method{
+  padding-left:22px;font-size:12px;color:var(--ink-dim);
+  font-family:'JetBrains Mono',monospace;
+}
+nav.toc a.method::before{content:"↳ ";color:var(--mec);}
+nav.toc a.method:hover{color:var(--mec);}
+
+/* ---------- LÉGENDE ---------- */
+.legend{
+  margin:0 0 32px;
+  padding:16px 18px;
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  font-size:13px;
+}
+.legend h2{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.18em;
+  margin-bottom:10px;font-weight:600;
+}
+.legend .lgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 14px;}
+.legend .lg{display:flex;align-items:flex-start;gap:8px;color:var(--ink-soft);}
+.legend .dot{width:10px;height:10px;border-radius:3px;margin-top:6px;flex-shrink:0;}
+.legend .lg b{color:var(--ink);}
+hr.soft{border:none;border-top:1px solid var(--line-soft);margin:14px 0;}
+
+/* ---------- DOSSIER HEADER (THÈME) ---------- */
+.dossier-head{
+  margin:48px 0 26px;
+  padding:26px 30px;
+  border:1px solid var(--line);border-radius:18px;
+  background:linear-gradient(135deg,rgba(108,99,255,.10),rgba(78,205,196,.04));
+}
+.dossier-head.d1{background:linear-gradient(135deg,rgba(78,205,196,.12),rgba(167,139,250,.05));border-color:rgba(78,205,196,.25);}
+.dossier-head.d2{background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(167,139,250,.05));border-color:rgba(108,99,255,.25);}
+.dossier-head.d3{background:linear-gradient(135deg,rgba(255,107,138,.12),rgba(255,209,102,.05));border-color:rgba(255,107,138,.25);}
+.dossier-head.d4{background:linear-gradient(135deg,rgba(255,209,102,.12),rgba(108,99,255,.05));border-color:rgba(255,209,102,.25);}
+.dossier-head.d5{background:linear-gradient(135deg,rgba(78,205,196,.12),rgba(108,99,255,.05));border-color:rgba(78,205,196,.25);}
+.dossier-head.d6{background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(255,107,138,.05));border-color:rgba(167,139,250,.25);}
+.dossier-head.d7{background:linear-gradient(135deg,rgba(255,209,102,.12),rgba(78,205,196,.05));border-color:rgba(255,209,102,.25);}
+.dossier-head.tr{background:linear-gradient(135deg,rgba(255,209,102,.10),rgba(78,205,196,.04));border-color:rgba(255,209,102,.20);}
+.dossier-head .dnum{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-dim);margin-bottom:8px;
+}
+.dossier-head h2{
+  font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--ink);
+  line-height:1.15;
+}
+.dossier-head p{color:var(--ink-soft);font-size:14px;margin-top:8px;}
+
+/* ---------- SECTION (anciennement .sec) ---------- */
+section.sec{margin:36px 0 14px;}
+.sec-head{
+  display:flex;align-items:flex-end;gap:14px;margin-bottom:14px;padding-bottom:10px;
+  border-bottom:1px solid var(--line);
+}
+.sec-head .si{
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
+  color:var(--mec);background:var(--surface2);
+  border:1px solid var(--line);padding:6px 10px;border-radius:8px;flex-shrink:0;
+}
+.sec-head h3{
+  font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);
+  line-height:1.2;
+}
+.sh{display:flex;align-items:flex-end;gap:14px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+.sh h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.2;}
+.si{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--mec);background:var(--surface2);border:1px solid var(--line);padding:6px 10px;border-radius:8px;flex-shrink:0;}
+.sec-head .new-badge{margin-left:8px;}
+
+/* ---------- HIÉRARCHIE TYPO INTRA-SECTION ---------- */
+/* h4 = grande division (A, B, C, D, I, II...) — taille 17px, marqué */
+section.sec h4{
+  font-family:'Playfair Display',serif;
+  font-size:17.5px;font-weight:700;color:var(--ink);
+  margin:24px 0 10px;
+  padding:6px 0 6px 12px;
+  border-left:3px solid var(--def);
+  line-height:1.3;
+}
+/* h5 = sous-division (1., 2., 3.) — taille 14.5px, JetBrains Mono pour souligner la gradation */
+section.sec h5{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;font-weight:600;color:var(--mec);
+  text-transform:uppercase;letter-spacing:.10em;
+  margin:14px 0 6px;
+}
+/* h6 = sous-sous-division (rare) — encore plus discret */
+section.sec h6{
+  font-family:'Source Sans 3',sans-serif;
+  font-size:13px;font-weight:600;color:var(--ink-soft);
+  margin:10px 0 4px;
+}
+/* Paragraphes section : police légèrement assouplie */
+section.sec > p,
+section.sec > div > p {color:var(--ink-soft);font-size:14.5px;line-height:1.7;margin:6px 0;}
+
+
+/* ---------- BLOCS SÉMANTIQUES ---------- */
+.def,.met,.aut,.fait,.piege,.dat,.card,.co,.synth{
+  padding:16px 20px;border-radius:12px;margin:10px 0;
+  border:1px solid var(--line);
+}
+.def{background:var(--def-bg);border-color:var(--def-line);border-left:3px solid var(--def);}
+.met{background:var(--mec-bg);border-color:var(--mec-line);border-left:3px solid var(--mec);}
+.aut{background:var(--aut-bg);border-color:var(--aut-line);border-left:3px solid var(--aut);}
+.fait{background:var(--fait-bg);border-color:var(--fait-line);border-left:3px solid var(--fait);}
+.piege{background:var(--piege-bg);border-color:var(--piege-line);border-left:3px solid var(--piege);}
+.dat{background:var(--dat-bg);border-color:var(--dat-line);border-left:3px solid var(--dat);}
+.card{background:var(--surface);}
+.co{background:var(--surface);font-style:italic;color:var(--ink-soft);}
+.synth{background:linear-gradient(135deg,var(--surface),rgba(108,99,255,.05));}
+
+.def-l,.met-l,.aut-l,.fait-l,.piege-l,.dat-l,.co-l,.synth-l,.blk-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  margin-bottom:7px;display:block;font-weight:600;
+}
+.def-l{color:var(--def);}
+.met-l{color:var(--mec);}
+.aut-l{color:var(--aut);}
+.fait-l{color:var(--fait);}
+.piege-l{color:var(--piege);}
+.dat-l{color:var(--dat);}
+.co-l{color:var(--ink-dim);}
+.synth-l{color:var(--ink-soft);}
+
+.def p,.def li,.met p,.met li,.aut p,.aut li,.fait p,.fait li,.piege p,.piege li,.dat p,.dat li,.card p,.card li,.co p,.co li,.synth p,.synth li{
+  color:var(--ink-soft);font-size:15px;line-height:1.7;
+}
+.def strong,.met strong,.aut strong,.fait strong,.piege strong,.dat strong,.card strong,.synth strong{color:var(--ink);font-weight:600;}
+.def ul,.def ol,.met ul,.met ol,.aut ul,.aut ol,.fait ul,.fait ol,.piege ul,.piege ol,.dat ul,.dat ol,.card ul,.card ol,.synth ul,.synth ol{padding-left:22px;margin-top:6px;}
+.def li,.met li,.aut li,.fait li,.piege li,.dat li,.card li,.synth li{margin-bottom:3px;}
+
+/* Anciennes classes mblock-* + msub-title-* → mappées vers nouveau système */
+.def-card,.met-card,.aut-card,.trap-card,.proof-card{
+  padding:14px 18px;border-radius:10px;margin:8px 0;
+  border:1px solid var(--line);
+}
+.def-card{background:var(--def-bg);border-left:3px solid var(--def);}
+.met-card{background:var(--mec-bg);border-left:3px solid var(--mec);}
+.aut-card{background:var(--aut-bg);border-left:3px solid var(--aut);}
+.trap-card{background:var(--piege-bg);border-left:3px solid var(--piege);}
+.proof-card{background:var(--fait-bg);border-left:3px solid var(--fait);}
+.card-content{color:var(--ink-soft);font-size:14.5px;line-height:1.65;}
+.card-content strong{color:var(--ink);}
+.def-name{font-weight:600;color:var(--def);font-size:14.5px;}
+.aut-name{font-weight:600;color:var(--aut);font-size:14.5px;}
+
+/* ---------- BLOC MÉTHODE bX (encart spécial, distinctif) ---------- */
+.method-block{
+  margin:24px 0 18px;
+  border:1.5px solid var(--mec-line);
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--mec-bg),rgba(108,99,255,.04));
+  overflow:hidden;
+}
+.method-block-head{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 20px;
+  background:linear-gradient(135deg,rgba(78,205,196,.10),rgba(108,99,255,.06));
+  border-bottom:1px solid var(--mec-line);
+}
+.method-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:15px;font-weight:700;color:var(--mec);
+  background:var(--surface);border:1.5px solid var(--mec);
+  padding:6px 14px;border-radius:10px;
+  letter-spacing:.04em;flex-shrink:0;
+}
+.method-block-head .mh-info{flex:1;}
+.method-block-head .mh-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-dim);
+}
+.method-block-head h4{
+  font-family:'Playfair Display',serif;
+  font-size:18px;color:var(--ink);font-weight:600;margin-top:2px;line-height:1.25;
+}
+.method-block-body{padding:14px 20px 8px;}
+.method-block-body .msub-title{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.13em;
+  margin:14px 0 6px;padding:6px 0;border-bottom:1px dashed var(--line);
+}
+.method-block-body .msub-title.met{color:var(--mec);}
+.method-block-body .msub-title.def{color:var(--def);}
+.method-block-body .msub-title.aut{color:var(--aut);}
+.method-block-body .msub-title.trap{color:var(--piege);}
+.method-block-body .msub-title.proof{color:var(--fait);}
+
+/* ---------- BADGES ---------- */
+.new-badge{
+  display:inline-block;font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;letter-spacing:.06em;
+  background:rgba(108,99,255,.12);color:var(--def);
+  border:1px solid rgba(108,99,255,.30);
+  padding:2px 9px;border-radius:5px;margin-left:8px;
+  vertical-align:middle;font-weight:600;
+}
+.badge-verif{
+  display:inline-block;font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;letter-spacing:.06em;
+  background:rgba(255,209,102,.12);color:var(--piege);
+  border:1px dashed var(--piege);padding:2px 9px;border-radius:5px;
+  margin-left:6px;text-transform:uppercase;font-weight:600;
+}
+.tag{
+  display:inline-block;font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;padding:2px 8px;border-radius:5px;margin:2px 3px 2px 0;
+}
+.tag-p{background:rgba(108,99,255,.15);color:var(--def);}
+.tag-r{background:rgba(255,107,138,.15);color:var(--aut);}
+.tag-t{background:rgba(78,205,196,.15);color:var(--mec);}
+.tag-y{background:rgba(255,209,102,.15);color:var(--piege);}
+
+/* ---------- DIVERS (tables, sous-titres, sep) ---------- */
+.defs-title{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.14em;
+  margin:22px 0 8px;padding:6px 0;border-bottom:1px dashed var(--line);font-weight:600;
+}
+.st{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;}
+.st th{background:var(--surface2);padding:9px 12px;text-align:left;
+  font-weight:600;color:var(--def);border-bottom:2px solid var(--line);
+  font-size:11px;text-transform:uppercase;letter-spacing:.08em;}
+.st td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink-soft);}
+.st tr:hover td{background:rgba(108,99,255,.04);}
+.strat-header{background:rgba(78,205,196,.10);color:var(--mec);
+  font-weight:700;text-align:center;font-size:12.5px;letter-spacing:.08em;}
+.sep{border:none;border-top:1px dashed var(--line);margin:18px 0;}
+
+/* ---------- FOOTER ---------- */
+footer{margin-top:60px;padding:24px 0;border-top:1px solid var(--line);font-size:12px;color:var(--ink-dim);}
+footer .wrap{display:flex;flex-direction:column;gap:6px;}
+footer code{font-family:'JetBrains Mono',monospace;color:var(--ink-soft);}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:880px){
+  .layout{grid-template-columns:1fr;}
+  nav.toc{position:static;margin-bottom:30px;}
+  h1.title{font-size:34px;}
+}
+
+/* ---------- PRINT ---------- */
+@media print{
+  body{background:#fff;color:#111;font-size:11px;padding:0;}
+  .wrap{max-width:none;padding:0 14mm;}
+  .layout{grid-template-columns:1fr;gap:0;}
+  nav.toc,.legend{display:none;}
+  header.top{border-color:#ccc;background:none;padding:14px 0;}
+  .kicker{color:#555;}
+  h1.title{font-size:24px;color:#111;}
+  h1.title em{color:#111;}
+  section.sec{margin-bottom:18px;page-break-inside:auto;}
+  .card,.def,.met,.aut,.dat,.fait,.piege,.synth,.method-block,.def-card,.met-card,.aut-card,.trap-card,.proof-card{
+    page-break-inside:avoid;border-color:#ccc;background:#fafafa;
+  }
+  .dossier-head{background:none;border-color:#ccc;}
+  .dossier-head h2{color:#111;}
+  .sec-head h3,.sh h3{color:#111;}
+  .new-badge,.tag,.badge-verif{border-color:#bbb;}
+  a{color:#111;text-decoration:none;}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <span class="kicker">MSG · CPGE ECT1 · Mme Soler · v18 fusionnée</span>
+    <h1 class="title">Fiche <em>auteurs</em> &amp; fonctions</h1>
+    <p class="subtitle">Compagnon de la fiche MSG principale. 91 auteurs du programme + sections fonctionnelles (Marketing, Management/RH/SI, Comptabilité/GF) + leurs histoires.</p>
+    <div class="meta-row">
+      <span><b>v18</b> · fusion v17 + v21</span>
+      <span><b>73</b> sections de cours</span>
+      <span><b>37</b> méthodes bX intégrées</span>
+      <span><b>91</b> auteurs</span>
+      <span><b>verbatim</b> strict / aucun contenu inventé</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<div class="layout">
+
+<!-- ============ NAV LATÉRALE ============ -->
+<nav class="toc">
+  <h6>Sommaire</h6>
+  <a class="theme tr" href="#dossier-auteurs">Référentiel</a>
+  <a class="sub" href="#m-auteurs">↳ Répertoire des auteurs</a>
+  <a class="sub" href="#m-marketing">↳ Marketing &amp; mercatique</a>
+  <a class="sub" href="#m-mgmt">↳ Management / RH / SI</a>
+  <a class="sub" href="#m-compta">↳ Comptabilité &amp; GF</a>
+  <a class="sub" href="#m-histoire-marketing">↳ Histoire du marketing</a>
+  <a class="sub" href="#m-histoire-rh">↳ Histoire RH</a>
+</nav>
+
+<!-- ============ CONTENU PRINCIPAL ============ -->
+<div>
+
+<!-- ============ LÉGENDE ============ -->
+<aside class="legend">
+  <h2>Légende des blocs</h2>
+  <div class="lgs">
+    <div class="lg"><span class="dot" style="background:#6c63ff"></span><span><b>Définition</b> — verbatim cours/photos</span></div>
+    <div class="lg"><span class="dot" style="background:#4ecdc4"></span><span><b>Méthode / mécanisme</b> — procédure d'application</span></div>
+    <div class="lg"><span class="dot" style="background:#ff6b8a"></span><span><b>Auteur</b> — référence doctrinale</span></div>
+    <div class="lg"><span class="dot" style="background:#a78bfa"></span><span><b>Fait / cas</b> — exemple traité en cours</span></div>
+    <div class="lg"><span class="dot" style="background:#ffd166"></span><span><b>Piège / débat</b> — distinction à connaître</span></div>
+    <div class="lg"><span class="dot" style="background:#60a5fa"></span><span><b>Donnée / date</b> — repère chiffré ou daté</span></div>
+  </div>
+  <hr class="soft">
+  <p style="font-size:12.5px;color:var(--ink-dim);">Les <b>blocs <code>bX</code></b> sont les méthodes numérotées (b1 à b36 + b9bis), insérées juste après la section de cours dont elles découlent — apprendre puis appliquer.</p>
+</aside>
+
+<!-- ============ CONTENU À VENIR : sections + méthodes intégrées ============ -->
+
+<div class="dossier-head tr" id="dossier-auteurs">
+  <div class="dnum">Référentiel auteurs &amp; fonctions</div>
+  <h2>Répertoire des auteurs &amp; fonctions de l'entreprise</h2>
+  <p>Les 91 auteurs du programme + les sections Marketing, Management/RH/SI, Comptabilité/GF + leurs histoires respectives. Fiche compagnon de la <strong>Fiche_MSG</strong> principale.</p>
+</div>
+<section class="sec" id="m-auteurs">
+<div class="sh"><div class="si" style="background:rgba(255,107,138,.12)">📚</div><h3>Répertoire complet des auteurs <span class="new-badge">AJOUTÉ</span></h3></div>
+<div class="aut"><div class="aut-l">AFNOR</div><p><strong>Projet</strong> (X50-115, ISO 10006) = ensemble d'activités coordonnées. <strong>Gestion de projet</strong> = outils, techniques et méthodes pour conduire, coordonner et harmoniser les tâches.</p></div>
+<div class="aut"><div class="aut-l">Aguilar</div><p>Méthode <strong>PEST</strong> (origine de PESTEL — analyse du macro-environnement).</p></div>
+<div class="aut"><div class="aut-l">Akerlof</div><p><strong>Sélection adverse</strong> / asymétrie d'information. Erreurs de recrutement possibles.</p></div>
+<div class="aut"><div class="aut-l">Ansoff</div><p><strong>Finalité</strong> = objectifs stratégiques / raison d'être. <strong>Définition stratégie</strong>. <strong>Matrice Ansoff</strong> (marché × produit). <strong>Signaux faibles</strong>. <strong>Synergie</strong> (intelligence collective). <strong>Pénétration de marché</strong>.</p></div>
+<div class="aut"><div class="aut-l">Argyris &amp; Schön</div><p><strong>Apprentissage organisationnel</strong> : <strong>simple boucle</strong> (sol. prédéfinies, processus connu) / <strong>double boucle</strong> (innovation, news sol.). Lien avec apprentissage machine supervisé/non supervisé.</p></div>
+<div class="aut"><div class="aut-l">Backhaus &amp; Tikoo (2004)</div><p><strong>Marque employeur</strong> : identité d'employeur identifiable et unique favorisant attractivité et rétention.</p></div>
+<div class="aut"><div class="aut-l">Barney (1991)</div><p>Méthode <strong>VRIN / VRIO</strong> : Valorisable, Rare, Inimitable, Non substituable (+ Organisationnel).</p></div>
+<div class="aut"><div class="aut-l">Barrow &amp; Mosley (2005)</div><p>La marque employeur favorise l'attractivité et la <strong>rétention du capital humain</strong>.</p></div>
+<div class="aut"><div class="aut-l">Becker (Gary, Prix Nobel 1992)</div><p><strong>RH = capital humain</strong>. Les compétences/connaissances d'un collaborateur sont un <strong>investissement</strong> pour le salarié (formation initiale + formation continue), qui rapporte des compétences et de la productivité — investissement car coûts (argent + temps) mais rapport en compétences.</p></div>
+<div class="aut"><div class="aut-l">Berglund <span class="new-badge">NOUVEAU</span></div><p><strong>Esprit d'entreprise</strong> : intrépidité, intuition, énergie, optimisme. Auteur mobilisable dans la méthode « Montrer que [X] est entrepreneur ».</p></div>
+<div class="aut"><div class="aut-l">Blau</div><p>Plus la <strong>taille augmente</strong>, plus l'entreprise est <strong>formalisée et rigide</strong>.</p></div>
+<div class="aut"><div class="aut-l">Bouquin (1987)</div><p><strong>Tableau de bord</strong> : outil d'aide à la décision (5 à 10 indicateurs).</p></div>
+<div class="aut"><div class="aut-l">Bressy (2004)</div><p>Définition du <strong>risque d'entreprise</strong> : évènements réduisant la rentabilité ou remettant en question l'existence.</p></div>
+<div class="aut"><div class="aut-l">Buffett (W.)</div><p>Capital politique &amp; rémunération : si rémunérat° dépend à convaincre alors réel travail d'arg. contre.</p></div>
+<div class="aut"><div class="aut-l">Burns &amp; Stalker (1965/1966)</div><p><strong>Stabilité de l'environnement</strong> (2 critères : tx renouvellement techno + tx croissance marché). Structures <strong>mécanistes</strong> (env. stable) / <strong>organiques</strong> (env. instable).</p></div>
+<div class="aut"><div class="aut-l">Carole Matthieu (film)</div><p><strong>Risques sociaux</strong> en entreprise (burn-out, climat, stress).</p></div>
+<div class="aut"><div class="aut-l">Chandler</div><p><strong>Stratégie</strong> = détermination des buts et objectifs à LT + adoption des moyens + allocation des ressources.</p></div>
+<div class="aut"><div class="aut-l">Chesbrough</div><p>Types d'<strong>open-innovation</strong> : inside-out, outside-in, complet.</p></div>
+<div class="aut"><div class="aut-l">Christensen</div><p><strong>Dilemme de l'innovateur</strong> / innovation disruptive. Modèle d'affaire différent.</p></div>
+<div class="aut"><div class="aut-l">Coase <span class="new-badge">NOUVEAU — Mana Exo 4</span></div><p><strong>Théorie des coûts de transaction</strong> (avec Williamson) : modalité d'arbitrage <strong>faire soi-même</strong> (intégrer) <strong>vs faire faire</strong> (externaliser). Coûts à choisir un co-contractant, payer et surveiller. Si inférieur à nos coûts de faire l'act nous m alors choisir externaliser. <strong>Vague D3+D5+D6 — exos cours</strong> : <strong>(Coase → relation confiance) ≠ contrat</strong>. Qd 1 acteur absorbe une grosse part de la VA d'un autre (ex : McDo + 80 % VA Castelar), il y a dépendance mutuelle m̄ sans contrat formel.</p></div>
+<div class="aut"><div class="aut-l">Commission européenne</div><p>Définition du <strong>risque</strong> (probabilité + sévérité). Typologie : intolérables, à limiter, acceptables.</p></div>
+<div class="aut"><div class="aut-l">Crozier</div><p><strong>Pouvoir = capacité d'imposer qqch à qqun</strong> (D5 — Porter). <strong>Homéostasie</strong> : ent. qui ne bouge pas, état constant et permanent (D4 — biais status quo).</p></div>
+<div class="aut"><div class="aut-l">David</div><p><strong>Dépendance de sentier</strong> : les choix passés conditionnent les choix futurs.</p></div>
+<div class="aut"><div class="aut-l">Dedijer</div><p><strong>Intelligence</strong> = information, son traitement et l'organisation qui s'en occupe.</p></div>
+<div class="aut"><div class="aut-l">Deming</div><p><strong>Roue de Deming</strong> (PDCA — amélioration continue). Référence pour la phase de contrôle (Simon — IMCC).</p></div>
+<div class="aut"><div class="aut-l">Drucker (Peter)</div><p><strong>Finalité</strong> = service rendu à la clientèle (≠ raison sociale, statut, R<sup>t</sup>). L'ent. doit chercher à assouvir le besoin du client.</p></div>
+<div class="aut"><div class="aut-l">Faulkner &amp; Bowman</div><p><strong>Horloge stratégique</strong> : 8 stratégies basées sur valeur perçue × prix. Voie médiane.</p></div>
+<div class="aut"><div class="aut-l">Fayol (Henry)</div><p>Industriel issu grande école, fin XIX<sup>e</sup>. <strong>1<sup>er</sup> auteur à présenter des fonctions de l'organisation</strong>. Crée la <strong>fonction administration</strong> (= aujourd'hui : fonction de management). <strong>5 fonctions de l'administration / manager</strong> :</p>
+<ul style="margin-top:6px;">
+<li><strong>1. Prévoir</strong> : envisager l'avenir et dresser programme d'actions → GEPC, budget prévisionnel</li>
+<li><strong>2. Organiser</strong> : définir de façon claire les responsabilités de chacun → organigramme préconisé</li>
+<li><strong>3. Coordonner</strong> : mettre de l'« harmonie » entre les acteurs → recommander de mettre en place des contacts (réunions). <strong>Mécanismes de coordination (Mintzberg)</strong> : standardisation (formelle), supervision directe, ajustement mutuel</li>
+<li><strong>4. Commander / Diriger</strong> (avant : commander, mtn : diriger) : nécessite bcp de qualités humaines (softskills) pour faire adhérer les acteurs = fidéliser maintenant</li>
+<li><strong>5. Contrôler</strong> : fondamental → superviser / vérifier que les ordres sont bien faits / respectés. Tâche la plus importante avec les softskills → d'où le tableau de bord</li>
+</ul>
+<p><em>« Harmonie » = bon climat social (perçue par Taylor bien avant Fayol).</em></p></div>
+<div class="aut"><div class="aut-l">Fayolle <span class="new-badge">NOUVEAU — Mana Exo 3</span></div><p><strong>Intrapreneuriat</strong> = « Σ de situations qui permettent à un individu innovant de concrétiser des idées pour apporter de la VA à l'ento. L'intrapreneuriat utilise des dispositifs, nécessite un état d'esprit permettant de développer une idée si elle présente un intérêt pour l'ento ». À ne pas confondre avec entrepreneuriat.</p></div>
+<div class="aut"><div class="aut-l">Fourastier</div><p>Trois secteurs (primaire, secondaire, tertiaire).</p></div>
+<div class="aut"><div class="aut-l">Freeman (1984)</div><p><strong>Théorie des parties prenantes</strong> (≠ Friedman). « Selon Freeman, parties prenantes se définit comme #1 individu ou #2 groupe d'individus qui peut affecter ou être affecté par la réalisation d'objectif organisationnel ». Une org pour bien fonctionner doit considérer toutes ses parties prenantes (fournisseurs, salariés, clients, collab…). <strong>Base de la RSE</strong>. Théorise un concept connu (mot inventé par lui).</p></div>
+<div class="aut"><div class="aut-l">Friedman (1953)</div><p>École de Chicago : <strong>seul but de l'entreprise = profit</strong>. Pour lui, parties prenantes à récompenser = <strong>actionnaires uniquement</strong>. Contesté par la RSE et par Freeman.</p></div>
+<div class="aut"><div class="aut-l">Gardner (1983)</div><p>Formes d'<strong>intelligence personnelle</strong> (5 formes : verbale/linguistique, visuelle/spatiale, corporelle/kinesthésique, intrapersonnelle, naturaliste écologiste).</p></div>
+<div class="aut"><div class="aut-l">Greiner (1972)</div><p>Modèle du <strong>cycle de vie</strong> des organisations : 5 phases de croissance / 5 crises.</p></div>
+<div class="aut"><div class="aut-l">Hamel &amp; Prahalad</div><p><strong>Intention stratégique</strong> = vision de l'avenir. <strong>Strategic intent ≠ Strategic fit</strong>. <strong>Compétences centrales / cœur de métier</strong>. <strong>Effet de levier</strong>.</p></div>
+<div class="aut"><div class="aut-l">James March <span class="new-badge">NOUVEAU — Mana Exo 3</span></div><p><strong>Ambidextrie organisationnelle</strong> : ent qui possède les <strong>2 activités</strong> (exploration = R&amp;D / exploitation = product°). <strong>2 types :</strong> structurelle (1 établissement explo / 1 établissement exploit) vs contextuelle (1 personne fait les deux). Ex Google : 20% tps dédié exploit°, 80% tps dédié exploitat°.</p></div>
+<div class="aut"><div class="aut-l">Jensen &amp; Meckling</div><p><strong>Aléa moral</strong> (théorie de l'agence). Comportement modifié après intégration.</p></div>
+<div class="aut"><div class="aut-l">Kim &amp; Mauborgne</div><p><strong>Océan rouge</strong> (marché concurrentiel saturé) / <strong>Océan bleu</strong> (marché non disputé).</p></div>
+<div class="aut"><div class="aut-l">Knight</div><p><strong>3 situations</strong> face à l'incertain (anticiper / prédire / risques). <strong>Risque ≠ incertitude</strong>. <strong>Entrepreneur gère les risques</strong> (oppose Schumpeter).</p></div>
+<div class="aut"><div class="aut-l">Knorr</div><p><strong>Intelligence économique</strong> = opération permettant de se procurer et traiter l'info externe pour maximiser les buts.</p></div>
+<div class="aut"><div class="aut-l">Kotler</div><p><strong>Marketing mix 7P</strong> : Product, Price, Place, Promotion, People, Process, Physical evidence (preuve physique = labels, certifications).</p></div>
+<div class="aut"><div class="aut-l">Larchevêque</div><p>Référence économiste cours (PESTEL — axe économique).</p></div>
+<div class="aut"><div class="aut-l">Lawrence &amp; Lorsch</div><p><strong>Contingence structurelle</strong> : différenciation / intégration. Plus env. instable + org. doit se différencier ; plus unités diff + besoin de mécanismes d'intégration.</p></div>
+<div class="aut"><div class="aut-l">Lemarchand (Nature &amp; Découvertes)</div><p>RSE = développement durable et profitable équilibrant les aspirations de toutes les <strong>parties prenantes</strong>.</p></div>
+<div class="aut"><div class="aut-l">Lepetit</div><p><strong>Performance globale</strong> : visée multidimensionnelle (économique, sociale, sociétale, financière, environnementale).</p></div>
+<div class="aut"><div class="aut-l">Martinet (1983)</div><p><strong>Métier</strong> = « savoir-faire global permettant de satisfaire une demande avec une offre adaptée ». <strong>Typologie des parties prenantes</strong> :</p>
+<ul>
+<li><strong>Internes</strong> : collaborateurs (sauf externes comme sous-traitance, intérim) → intérieurs à l'org°</li>
+<li><strong>Externes</strong> : clients, fournisseurs (sauf si propre prod), concurrents, État, institutions financières → extérieurs</li>
+<li><strong>Ubiquistes</strong> : à la fois internes ET externes (collaborateurs, actionnaires, syndicats — ex : intérim, employé d'autre part)</li>
+</ul></div>
+<div class="aut"><div class="aut-l">Maslow</div><p><strong>Pyramide des besoins</strong> : physiologique → sécurité → appartenance → estime (au regard des <em>autres</em>) → accomplissement / réalisation de soi.</p></div>
+<div class="aut"><div class="aut-l">McCarthy</div><p>Co-fondateur de l'IA avec Minsky (<strong>conférence MIT 1956 — vraie date de l'IA</strong>). Distingue <strong>Intelligence forte</strong> (avec conscience) / <strong>Intelligence faible</strong> (sans conscience, aujourd'hui).</p></div>
+<div class="aut"><div class="aut-l">Asimov <span class="new-badge">NOUVEAU</span></div><p><strong>3 lois de la robotique</strong> (base éthique et morale) : (1) un robot ne peut blesser un humain ni laisser un humain être blessé ; (2) un robot doit obéir aux ordres humains sauf si contraires à la 1<sup>ère</sup> loi ; (3) un robot doit protéger son existence si pas en contradiction avec les 2 premières. → Encadrer le fonctionnement éthique d'une organisation.</p></div>
+<div class="aut"><div class="aut-l">Kaplan &amp; Norton <span class="new-badge">NOUVEAU</span></div><p><strong>Tableau de Bord prospectif (Balanced Scorecard)</strong> : alternative au TB financier seul. Crée du lien entre les fonctions de l'entreprise. <strong>4 axes interdépendants</strong> à amener ensemble en bons mat° tjrs avec le but de satisfaire le client : Client (mercatique) · Financière (GF) · Processus internes (SI, prod...) · Apprentissage organisationnel (RH). TB prospectif = somme des TB fonctionnels. Demande de conciliation par arbitrages — à l'inverse de chaque axe pris isolément.</p></div>
+<div class="aut"><div class="aut-l">McKinsey (cabinet)</div><p><strong>Matrice de portefeuille 3×3</strong> : atouts concurrentiels × attraits du marché → 9 cases avec préconisations stratégiques.</p></div>
+<div class="aut"><div class="aut-l">Mercier (1999)</div><p><strong>Éthique</strong> = ensemble de principes, de valeur et de croyances guidant la conduite des individus.</p></div>
+<div class="aut"><div class="aut-l">Minsky (version cours)</div><p><strong>IA</strong> = construction de programmes informatiques capables d'accomplir des tâches accomplies de façon satisfaisante par des êtres humains. Conférence MIT 1956 (avec McCarthy).</p></div>
+<div class="aut"><div class="aut-l">Mintzberg</div><p><strong>Buts</strong> : buts de mission (liés à l'activité) et buts de système (liés à l'organisation). <strong>2 types de stratégies</strong> <span class="new-badge">NOUVEAU — Mana Exo 4</span> : <em>délibérée</em> (indépendamment du contexte, choix réfléchi en amont) vs <em>émergente</em> (s'adapte à l'env, à la cible, dépend du contexte → diff par rapport aux autres). <strong>Caractérisation par 5 éléments</strong> : nommer la strat étudiée (= décision), si elle répond à ses 5 critères alors elle est une strat. <strong>Mécanismes de coordination</strong> : standardisation (formelle), supervision directe, ajustement mutuel.</p></div>
+<div class="aut"><div class="aut-l">Moore (1993)</div><p><strong>Écosystème d'affaires</strong> : firme pivot, co-évolution.</p></div>
+<div class="aut"><div class="aut-l">Napoléon</div><p><strong>Intuition rationnelle</strong> : intuition peut permettre bonnes décisions (capacité à reconnaître signaux faibles, perception).</p></div>
+<div class="aut"><div class="aut-l">Nonaka &amp; Takeuchi</div><p><strong>2 types de connaissances</strong> : explicite (transmissible) / tacite (savoir-faire personnel non transmissible).</p></div>
+<div class="aut"><div class="aut-l">Penrose (1959)</div><p>Typologie des <strong>ressources</strong> : tangibles (matérielles, humaines, financières) / intangibles (technologiques, organisationnelles, mercatiques).</p></div>
+<div class="aut"><div class="aut-l">Pfeffer &amp; Salancik <span class="new-badge">Vague D3+D5+D6 — exos cours</span></div><p><strong>Dépendance aux ressources</strong>. L'entreprise dépend de ses parties prenantes pour ses ressources critiques. Ds structure réseau : <strong>contrat nommé crée une dépendance bilatérale mutuelle</strong>. Nœud dépend de la firme pivot ; combiné à <strong>P. David</strong> (dépendance de sentier) : changer de fournisseur dmd changer trop de choses sur pdt → trop cher de rester avec m̄ fournisseur.</p></div>
+<div class="aut"><div class="aut-l">Pigou <span class="new-badge">NOUVEAU — Mana Exo 3</span></div><p><strong>Externalité</strong> : notion économique mobilisable dans le cadre des <strong>risques écologiques</strong> (pollution, dérèglement climatique). Effet d'une activité sur des tiers non compensé par le marché.</p></div>
+<div class="aut"><div class="aut-l">Pigneur &amp; Osterwalder</div><p><strong>Business Model CANVAS</strong> (9 composantes).</p></div>
+<div class="aut"><div class="aut-l">Porter</div><p><strong>5(+1) forces</strong> de l'industrie. <strong>FCS</strong> (Facteurs Clés de Succès). <strong>Avantage concurrentiel</strong> (1986). <strong>Stratégies génériques</strong> : domination par les coûts, différenciation, focalisation. <strong>Chaîne de valeur</strong>. <strong>PESTEL</strong> (rajout écologique et légal). <strong>Intelligence économique</strong> : bonne info, bon moment, bonne personne.</p></div>
+<div class="aut"><div class="aut-l">Reix</div><p><strong>SI (formulation exacte)</strong> : « Selon Reix, le SI se définit comme un <strong>ensemble organisé de R (R. tangible physique, tangible humaine, intangible techno...) permettant d'acquérir, de stocker, de traiter et de diffuser (sous forme de texte, vidéo, image, sons...) des informations dans et entre les org°</strong> ». <strong>4 fonctions Reix</strong> : acquérir, stocker, traiter, diffuser. <strong>Distinction</strong> : Système informatique = technique / Système d'information = organisationnel (orientation moyen terme = pilotage). <strong>3 critères de qualité</strong> : compatibilité, confidentialité, disponibilité.</p></div>
+<div class="aut"><div class="aut-l">Rogers</div><p><strong>Théorie de la diffusion de l'innovation</strong> : plus les gens adoptent l'innovation, plus elle devient attractive (ex : voiture hybride Toyota).</p></div>
+<div class="aut"><div class="aut-l">Sarasvathy <span class="new-badge">NOUVEAU</span></div><p>Capacité à <strong>saisir les opportunités</strong> de marché. <strong>Typologie de l'entrepreneur</strong> : <em>Mercenaire vagabond</em> (« la fin justifie les moyens », océan rouge) vs <em>Entrepreneur aventureux</em> (passion, acceptation du new, océan bleu). [À VÉRIFIER orthographe nom]</p></div>
+<div class="aut"><div class="aut-l">Schneider</div><p><strong>Modèle ASA</strong> : collaborateur/client attiré par une org. qui partage des valeurs avec lui.</p></div>
+<div class="aut"><div class="aut-l">Schumpeter</div><p><strong>5 types d'innovation</strong> (produit, procédé, débouchés, organisation, matières premières). <strong>Destruction créatrice</strong>. Entrepreneur prend des risques (oppose Knight).</p></div>
+<div class="aut"><div class="aut-l">Schwartz</div><p>Théorie des <strong>valeurs</strong> : les consommateurs partageant les mêmes valeurs sont attirés par les entreprises qui les incarnent.</p></div>
+<div class="aut"><div class="aut-l">Senge (Peter)</div><p><strong>Apprentissage organisationnel</strong>. <strong>Intelligence collective</strong> : 3 axes (clarifier les aspirations, engager regard collectif, comprendre la complexité) et 5 grands principes.</p></div>
+<div class="aut"><div class="aut-l">Simon (Prix Nobel 1973)</div><p><strong>Rationalité limitée</strong> (rationalité procédurale + substantielle). <strong>Optimum de second rang</strong> : recherche d'une décision satisfaisante et non optimale. <strong>Modèle IMC / IMCC</strong> (Intelligence, Modélisation, Choix + Contrôle). <strong>Années 70 — Décision = processus, pas un choix</strong>. <strong>Phases (formulation exacte)</strong> : 1) Intelligence = formuler le problème sous forme d'alternatives à la décision (= constats prise de décision) ; 2) Modélisation = présenter les différents scénari et les évaluer ; 3) Choix = retenir comme décision celle qui aura la meilleure évaluation ; 4) Contrôle (modèle IMCC, Yates 1989). Boucle de rétroaction.</p></div>
+<div class="aut"><div class="aut-l">Smith (Adam) <span class="new-badge">Vague D3+D5+D6 — exos cours</span></div><p><strong>Division du travail</strong> → fondement intellectuel de l'OST de Taylor. La spécialisat° des tâches augmente la productivité (effet apprentissage + effet expérience → ↘ coûts unitaires).</p></div>
+<div class="aut"><div class="aut-l">Spence</div><p><strong>Théorie du signal</strong> : envoyer un signal au marché en respectant des normes éthiques.</p></div>
+<div class="aut"><div class="aut-l">Taylor</div><p><strong>OST</strong> (Organisation Scientifique du Travail). Ouvrier appris sur le tas, capacité d'observation. Cours du soir → contremaître. <strong>Voit l'importance des softskills</strong> (compétences douces, qualité intrinsèque, empathie) bien avant Fayol — perçoit que la coordination/relation entre les gens doit être par envie. Salaire à la pièce (+ tu booses + tu gagnes). Perçoit aussi <strong>l'« harmonie »</strong> (bon climat social) bien avant Fayol.</p></div>
+<div class="aut"><div class="aut-l">Thiétart</div><p>« <strong>Manager c'est l'art de diriger</strong> » (ex : diriger une équipe, un service, un groupe). <strong>3 types de managers</strong> : 1<sup>ère</sup> ligne (chef gp/équipe) / 2<sup>nde</sup> ligne (intermédiaire, division) / supervision (Comex / Comité exécutif).</p></div>
+<div class="aut"><div class="aut-l">Toyoda</div><p><strong>Méthode Kaizen</strong> : avancer petit pas par petit pas (référence japonaise, cercles de qualité).</p></div>
+<div class="aut"><div class="aut-l">Torrès <span class="new-badge">NOUVEAU — Mana Exo 4</span></div><p><strong>ESA — Écosystème d'Affaires (verbatim)</strong> : « une coalit hétérogène d'ent relevant de secteurs diff et formant une commu strat d'intérêts ou de valeurs structurés en réseaux autour d'un leader qui arrive à imposer ou à faire partager sa concept commerciale ou son standard technologique ». Coalit' = entente d'intérêts convergeants. Secteurs diff = environnement. Réseau autour d'une <strong>firme pivot</strong>. Pouvoir (réf <strong>Crozier</strong>) = captation de valeur.</p></div>
+<div class="aut"><div class="aut-l">Turing</div><p><strong>Test de Turing</strong> (1950). Première machine à décoder. Origine de l'algorithmique. Jeu de l'imitation.</p></div>
+<div class="aut"><div class="aut-l">Von Hippel</div><p><strong>Early adopters</strong> : les premiers utilisateurs d'une innovation.</p></div>
+<div class="aut"><div class="aut-l">Weick (Karl)</div><p><strong>Sense making</strong> : processus de traitement de l'information (sens vs signe).</p></div>
+<div class="aut"><div class="aut-l">Wenger</div><p><strong>Communautés de pratique</strong> : connaissances mises en groupe par les gens, partage entre pairs.</p></div>
+<div class="aut"><div class="aut-l">Williamson</div><p><strong>Théorie des coûts de transaction</strong> : le recours au marché (sous-traitance) génère des coûts de recherche, négociation et contrôle. L'entreprise arbitre entre <strong>faire</strong> (intégrer) et <strong>faire faire</strong> (externaliser).</p></div>
+<div class="aut"><div class="aut-l">Yates (1989)</div><p><strong>Contrôle</strong> = moyens mis en œuvre pour assurer l'atteinte des objectifs.</p></div>
+<div class="aut"><div class="aut-l">Confucius<span class="new-badge">D6 — Vague cours structure</span></div><p>Citation : « <em>Il n'y a rien de plus permanent que le changement.</em> » Convoqué contre l'<strong>homéostasie</strong> dans les structures rigides (référence pour structures organiques).</p></div><div class="aut"><div class="aut-l">Coyne &amp; Clifford<span class="new-badge">D7 — Vague cours ressources</span></div><p>DEF <strong>cœur de compétence</strong> verbatim : « une combinaison de compétences et de savoirs complémentaires présents ds un grp ou une équipe et qui se traduisent par la capacité à réaliser une ou pls tâches essentielles à un standard de niveau mondial ».</p></div><div class="aut"><div class="aut-l">DiMaggio &amp; Powell<span class="new-badge">D6 — Vague cours structure</span></div><p>Concept d'<strong>isomorphisme institutionnel</strong> : les org auront tendance à copier ce que font les autres → devient un standard car partagé. Utilisé pour expliquer la standardisation des normes et le phénomène de mode dans les structures.</p></div><div class="aut"><div class="aut-l">Emery &amp; Trist<span class="new-badge">D6 — Vague cours structure</span></div><p>Travaillent sur le fait d'<strong>isoler les différents environnements</strong> pour mieux évaluer leur impact sur la structure. Types d'env : muant, placide, aléatoire. En fonction des caractéristiques de l'env, impacts diff sur les org. Ex : env turbulent → structure agile/flexible.</p></div><div class="aut"><div class="aut-l">McGregor<span class="new-badge">D6 — Vague cours structure</span></div><p><strong>Théorie X</strong> : individu préfère consigne, m̄ chose, pas changement → content avec autorité. <strong>Théorie Y</strong> : individu aime chgmt, responsabilité, autonomie → content avec liberté. Important d'être ds la structure qui correspond à soi (sinon démotivation).</p></div><div class="aut"><div class="aut-l">Nelson &amp; Winter<span class="new-badge">D6 — Vague cours structure</span></div><p>Concept de <strong>routine organisationnelle</strong>. Avantages : rassurant (salariés), ↘ coûts (ent.), ↘ coût unitaire de prod, app simple boucle. Inconvénient : démotivation de ceux qui aiment la responsabilité.</p></div><div class="aut"><div class="aut-l">Samuel &amp; Mannheim<span class="new-badge">D6 — Vague cours structure</span></div><p>Étudient les relations entre <strong>centralisation, formalisation et pouvoir</strong> dans les organisations. Pouvoir et centralisation forte → standardisation et formalisation, mais besoin de contrôle accru.</p></div><div class="aut"><div class="aut-l">Stinchcombe<span class="new-badge">D6 — Vague cours structure</span></div><p>Travaille sur l'<strong>âge</strong> et distingue <strong>4 types d'industrie</strong> selon la période où il se situe : 1. pré-industrie (avant usine, fermes — entraide familiale), 2. révolution industrielle (1830, usines familiales : Michelin 1860/1870), 3. industrie âge du chemin de fer (début 19ᵉ s.), 4. post-20ᵉ s. (ent. des temps modernes : proport° de salarié, cadres, coopération). L'âge donne forme d'ent. avec type de formalisation.</p></div><div class="aut"><div class="aut-l">Woodward (S.)<span class="new-badge">D6 — Vague cours structure</span></div><p>S'intéresse au rôle de la <strong>technologie</strong> sur la structure (mode de production). Distingue <strong>3 modes</strong> : petite série (artisanale), grande série (prod de masse), continue. <strong>Thèse</strong> : 1 type de techno = 1 mode d'org spécifique. <strong>4 liens techno-structure</strong> : 1) complexité ↗ → contrôle/encadrement/hiérarchie ↗ ; 2) complexité ↗ → ratio main d'œuvre prod ↘ → rémunération ↘ ; 3) complexité ↗ → séparation admin/prod plus claire, bureaucratie ↗ ; 4) à partir d'un certain niveau (trop grande série) la relation s'inverse. Rejoint Blau et Stinchcombe.</p></div></section><section class="sec" id="m-marketing">
+<div class="sh"><div class="si" style="background:rgba(255,107,138,.12)">📣</div><h3>Marketing, Mercatique, Communication &amp; Notoriété <span class="new-badge">NOUVEAU — Mana Exo 1</span><span class="badge-verif">À VÉRIFIER : Liminaire / D? — Reorder vague 1</span></h3></div>
+<div class="def"><div class="def-l">Marketing / Mercatique — formulation exacte</div><p>Le marketing = <strong>« ensemble de techniques (de gestion) et d'actions ayant pour objectif d'étudier et d'influencer les besoins et les comportements des consommateurs afin de réaliser en continu les adaptations de la production et de l'appareil commerciale en fonction des besoins précédemment cités »</strong>.</p>
+<ul>
+<li><strong>Techniques</strong> = moyens de faire</li>
+<li><strong>Actions</strong> = étude des B et comportements consommateurs (service marketing → comportement d'achat → service commercial)</li>
+<li><strong>OBJECTIF / BUT : satisfaction client</strong></li>
+<li>S. marketing = théorie / S. prod + commercial = opérationnel</li>
+</ul></div>
+<div class="def"><div class="def-l">Marketing direct — formulation exacte</div><p><strong>« Technique de communication personnalisée et individualisée ayant pour objet de répondre + ou − immédiatement aux besoins du client »</strong>.</p>
+<ul>
+<li><strong>Personnalisée</strong> → adapter par sous-groupes</li>
+<li><strong>Individualisée</strong> → séparer les groupes (1 client = 1 message)</li>
+</ul></div>
+<div class="def"><div class="def-l">Plan de marchéage (Kotler — 4P)</div><p>Le plan de marchéage = <strong>4P de Kotler</strong> : Produits (caractéristiques ?) · Prix (combien ?) · Communication (média ?) · Distribution.</p></div>
+<div class="def"><div class="def-l">Publicité — formulation exacte</div><p><strong>« Technique de communication dont l'objectif est de modifier l'attitude et/ou le comportement des consommateurs à l'égard d'un produit »</strong>.</p></div>
+<div class="met"><div class="met-l">Méthode — Plan de Communication (5 étapes)</div>
+<p>Plan de communication = programmation / étude de comment faire.</p>
+<ol>
+<li><strong>Identifier la cible</strong> (1 cible = 1 plan de comm ; 4 cibles = 4 plans). Chacun à ses ressentis.</li>
+<li><strong>Définir des objectifs</strong> :
+<ul>
+<li><strong>Cognitif</strong> = informer</li>
+<li><strong>Affectif</strong> = créer du lien</li>
+<li><strong>Conatif</strong> = susciter l'achat (l'achat, racheter…)</li>
+</ul></li>
+<li><strong>Déterminer le message</strong> (objectifs ≠ → messages ≠) — message déterminé avec étape du dessus</li>
+<li><strong>Canaux</strong> :
+<ul>
+<li><strong>Média</strong> : TV, Radio, Presse, Affichage, Cinéma, Internet</li>
+<li><strong>Hors média</strong> : pub sur lieu de vente (dégustation…), sponsoring (affect), bouche à oreille (com par client). Ex : artisanat, [Iddle], agence immobilière → 2 commerce que comme ça</li>
+</ul></li>
+<li><strong>Support</strong> :
+<ul>
+<li>Pub TV → spot pub</li>
+<li>Radio → spot audio (ex Leclerc : insérer vie particulière de promo, long moment évolution de la vie)</li>
+<li>Presse → encart publicitaire (achat d'espace = achat d'encart)</li>
+<li>Affiche → affiche lumineuse</li>
+</ul>
+<p style="margin-top:6px;"><em>Note : médias à la base hors digitaux. Maintenant tout en digital. Radio → podcast. Presse → journaux Michel. Affichage → affiche digitale. Cinéma → home cinéma à la maison.</em></p></li>
+</ol></div>
+<div class="def"><div class="def-l">Télé-marketing (= phoning) — formulation exacte</div><p><strong>« Définit comme techniques de marketing direct utilisant le téléphone pour communiquer avec les prospects et les clients »</strong>.</p>
+<p><strong>Limites du démarchage aujourd'hui :</strong></p>
+<ol>
+<li>les gens utilisent les téléphones portables → possibilité de mettre en spam</li>
+<li>raison légale : <strong>RGPD</strong> → on ne peut ø vendre les données sans le consentement des clients → entreprises ne peuvent plus vendre de données</li>
+<li>raison légale : réglementation sur la vie privée</li>
+</ol></div>
+<div class="def"><div class="def-l">Relations publiques (avant 2011) — formulation exacte</div><p><strong>« Regroupe l'ensemble des techniques et des actions permettant de gérer la réputation et l'image d'une entreprise, d'une marque auprès des différents publics »</strong>.</p></div>
+<div class="def"><div class="def-l">Image de marque — formulation exacte</div><p><strong>« Perception du consommateur sur la marque / l'entreprise »</strong>.</p></div>
+<div class="def"><div class="def-l">Communication institutionnelle</div><p><strong>« A pour objet de réaliser des relations publiques »</strong> → objectif affectif ou cognitif → Plan de communication.</p></div>
+<div class="def"><div class="def-l">Notoriété d'une marque — formulation exacte</div><p><strong>« Le fait pour une entreprise ou marque d'être connue par les consommateurs »</strong>.</p>
+<ul>
+<li><strong>Notoriété positive</strong> : ex Restos du ❤</li>
+<li><strong>Notoriété négative</strong> : ex Shein, Total, Michelin</li>
+</ul>
+<p><strong>Distinction CRUCIALE Entreprise vs Marque :</strong></p>
+<ul>
+<li><strong>Entreprise</strong> = enseigne = statut juridique</li>
+<li><strong>Marque</strong> = visible pour le client</li>
+<li>Ex : Peugeot (marque) ; Stellantis (entreprise). Zara (marque) ; Inditex (entreprise)</li>
+<li>Ex : Facebook (entreprise) → rachat Twitter / absorption Instagram → après rachat ø entreprise → devient marque</li>
+</ul></div>
+<div class="met"><div class="met-l">3 indicateurs — Mesure de la notoriété</div>
+<ol>
+<li><strong>Notoriété spontanée</strong> : marque qui vient au client sans aide (ex : « quelles marques de X connaissez-vous ? »)</li>
+<li><strong>Notoriété assistée</strong> : on donne des choix au client, il dit ce qu'il connaît dedans</li>
+<li><strong>Notoriété Top of Mind</strong> : <em>« notoriété de premier rang → compter le nombre de fois où une entreprise est citée en 1<sup>er</sup> en notoriété spontanée (cité le + de fois) → 1 dans chaque étude de notoriété spontanée »</em></li>
+</ol></div>
+<div class="def"><div class="def-l">Données / Information client</div><p><strong>Information client</strong> = <em>« tt les données qui seront transformé en info et qui permettent d'éclairer l'entreprise sur les préférences des clients »</em>.</p>
+<p><strong>Données = data</strong> : R. Intangible. Technologique / Mercatique. <em>« Or noir des entreprises »</em> → qqch de valorisable car exploitable et rapportable. Sans data ø d'info clients.</p></div>
+<div class="def"><div class="def-l">RGPD</div><p><strong>RGPD = Règlement Général sur la Protection des Données</strong> → on ne peut vendre données que si tous les propriétaires donnent leur consentement.</p>
+<p><strong>CNIL</strong> = Commission Nationale (autorité de contrôle).</p>
+<p>Ex Camaïeu : voulait vendre données pour valoriser son fichier. Or si enfant mineur ou décédé, ils ne peuvent avoir donné leur consentement. De + le coût pour demander des consentements ⊕ cher que ce que ça leur rapporte. En cas de piratage : amende par la CNIL pour partage de données.</p></div>
+<div class="def"><div class="def-l">Cookies</div><p>Anglais : logiciel malveillant. Refuser ou personnaliser. Protège ø des cookies fonctionnelles. Payer contre refus. <strong>Limite RGPD</strong> : car normalement ø le droit de conditionner. Micro market sur internet.</p></div>
+<div class="def"><div class="def-l">Effet client</div><p><strong>« Lorsque le client doit faire un effort supplémentaire pour avoir accès aux produits »</strong>.</p></div>
+<div class="aut"><div class="aut-l">Kotler</div><p><strong>4P</strong> : Produits, Prix, Communication, Distribution (plan de marchéage). Marketing mix 7P étendu : + People, Process, Physical evidence.</p></div>
+<div class="aut"><div class="aut-l">Ford</div><p><strong>Fordisme</strong> = application du Taylorisme dans l'automobile (chaîne de production : 1 type de voiture, 1 besoin → 1<sup>er</sup> marketing → client s'adapte).</p></div>
+<div class="aut"><div class="aut-l">Ohno (japonais, 1980-1990)</div><p><strong>Lean management</strong> : reprend concept de masse de qualité totale. Notion <strong>juste à temps</strong>, qualité totale.</p></div>
+<div class="aut"><div class="aut-l">F. M. Gybart (1980-1990)</div><p><strong>Communication de masse par type de cible</strong> (segmentation marketing).</p></div>
+</section><section class="sec" id="m-mgmt">
+<div class="sh"><div class="si" style="background:rgba(108,99,255,.12)">🧩</div><h3>Management, RH, SI &amp; Information <span class="new-badge">AJOUTÉ</span></h3></div>
+<div class="defs-title">Définitions à connaître</div>
+<div class="def"><div class="def-l">Définition — Management</div><p>Processus par lequel les résultats sont obtenus de façon <strong>efficace et efficiente</strong> via et avec la <strong>coopération d'autrui</strong>.</p></div>
+<div class="def"><div class="def-l">Définition — Efficience</div><p>Effectuer une tâche correctement, <strong>maîtrise de la relation entre les ressources et le rendement</strong>, en cherchant à minimiser le coût du processus.</p></div>
+<div class="def"><div class="def-l">Définition — Efficacité</div><p>Mesure se référant au fait d'<strong>effectuer les tâches qui s'imposent</strong>, d'<strong>atteindre les objectifs</strong>.</p></div>
+<div class="def"><div class="def-l">Définition — Contrôle (Yates, 1989)</div><p>Ensemble de moyens mis en œuvre pour s'assurer de l'<strong>atteinte des objectifs fixés</strong>.</p></div>
+<div class="def"><div class="def-l">Définition — GRH</div><p>Aptitude de l'entreprise à assurer l'<strong>adéquation entre ses moyens humains et l'évolution constante de ses besoins en compétences</strong> dans l'optique d'assurer sa pérennité.</p></div>
+<div class="def"><div class="def-l">Définition — Information</div><p>Renseignement, connaissance dont les fonctions principales sont la <strong>réduction de l'incertitude</strong> lors de la prise de décision, la réalisation de tâches et la communication.</p></div>
+<div class="def"><div class="def-l">Définition — Source d'information</div><p>Une source d'information se définit comme <strong>d'où vient l'information</strong>. Peut être externe/interne, primaire/secondaire.</p></div>
+<div class="def"><div class="def-l">Définition — SI (Reix)</div><p>Ensemble organisé de ressources (matériel, logiciel, personnel, données, procédures) permettant d'<strong>acquérir, traiter, stocker, communiquer</strong> des informations dans des organisations.</p></div>
+<div class="def"><div class="def-l">Définition — Collecte de données</div><p>Approche systématique consistant à réunir et mesurer des informations en provenance de <strong>sources variées</strong>, afin d'obtenir une <strong>vue complète et précise</strong> d'un domaine d'intérêt.</p></div>
+<div class="def"><div class="def-l">Définition — Machine Learning</div><p>Ensemble de techniques donnant aux machines la capacité d'<strong>apprendre automatiquement un ensemble de règles à partir de données</strong>. Contrairement à la programmation (exécution de règles prédéterminées).</p></div>
+<div class="aut"><div class="aut-l">Yates (1989)</div><p><strong>Contrôle</strong> = moyens mis en œuvre pour assurer l'atteinte des objectifs.</p></div>
+<div class="aut"><div class="aut-l">Reix</div><p><strong>SI</strong> = ensemble organisé de ressources pour acquérir, traiter, stocker, communiquer des informations.</p></div>
+</section><section class="sec" id="m-compta">
+<div class="sh"><div class="si" style="background:rgba(167,139,250,.12)">💰</div><h3>Système comptable &amp; PCG <span class="new-badge">NOUVEAU — Mana Exo 2</span></h3></div>
+<div class="def"><div class="def-l">PCG — Plan Comptable Général</div>
+<p>Le PCG va <strong>enregistrer les flux qui ø jour après jour</strong> dans une certaine chose (en €) par l'entreprise vis à vis de ses parties prenantes.</p>
+<p>Le PCG <strong>classifie les comptes en classes</strong> (= catégories), crée 8 grandes catégories de comptes.</p></div>
+<div class="def"><div class="def-l">Écriture comptable</div><p>Une écriture comptable = <strong>traduction comptable des échanges (flux)</strong>.</p>
+<p><strong>3 types de flux :</strong></p>
+<ul>
+<li><strong>Monétaire</strong> (= paiement) → physique / réel</li>
+<li><strong>Financier</strong> (= investissement)</li>
+<li><strong>Informationnel</strong></li>
+</ul>
+<p><strong>En compta : mouvement = flux / mod</strong>. <strong>Débit (gauche) / Crédit (droite)</strong>.</p>
+<p><strong>Règle de la partie double</strong> : tjrs deux flux. Le journal a un libellé qui explique la transaction et permet la traçabilité.</p>
+</div>
+<div class="def"><div class="def-l">Enregistrement (VOC)</div><p>Un enregistrement = <strong>reconnaissance des relations entre l'entreprise et ses parties prenantes</strong>.</p></div>
+<div class="card"><h4>Les classes du PCG</h4>
+<table class="st">
+<thead><tr><th>Classe</th><th>Nom</th><th>Contenu</th></tr></thead>
+<tbody>
+<tr><td><strong>1</strong></td><td>Comptes capitaux</td><td>Traduction de la dette d'une organisation aux regards des parties prenantes (actionnaires…). Flux financier.</td></tr>
+<tr><td><strong>2</strong></td><td>Comptes d'immobilisation</td><td>Actifs détenus par l'entreprise pendant longtemps : actif <strong>incorporel</strong> (intangible), actif <strong>corporel</strong> (tangible), actif <strong>financier</strong> (actions / obligations). Investissement ≠ charges.</td></tr>
+<tr><td><strong>3</strong></td><td>Comptes de stock et en cours</td><td>Marchandises (à revendre en l'état), Matières premières, Produits finis, Produits encours, Industriel transformation. Compte de stocks consolidé.</td></tr>
+<tr><td><strong>4</strong></td><td>Comptes de tiers</td><td>Comptes de Pres / classe 6/7 mélanger. <strong>Tiers</strong> = parties prenantes / acteurs qui ont des relations avec l'organisation (externes : collab, salariés, État, clients, fournisseurs). Dû au décalage dans le temps.</td></tr>
+<tr><td><strong>5</strong></td><td>Comptes financiers</td><td>Banque (5/12) : encaissements / décaissements. Ce compte doit toujours être positif (toute l'argent convoité obtenu).</td></tr>
+<tr><td><strong>6</strong></td><td>Comptes de charges</td><td>Ensemble des charges. Charges ≠ coûts. Mat. 1<sup>ère</sup> / personnel… Doivent être amorties → <strong>amortissement</strong> = perte de valeur des immobilisations.</td></tr>
+<tr><td><strong>7</strong></td><td>Comptes de produits</td><td>Produits financiers, produits clés, ventes de biens, toutes les ventes qui rapportent de l'argent.</td></tr>
+</tbody>
+</table>
+<p style="margin-top:6px;"><strong>5<sup>ème</sup> classe → BILAN</strong> | <strong>6 et 7 → Compte de Résultats</strong></p>
+<ul>
+<li><strong>Bilan</strong> : reflète le patrimoine de l'entreprise</li>
+<li><strong>Compte de Résultats</strong> = comptes de gestion</li>
+<li><strong>Logique comptable</strong> : Journal → comptes ent° → PCG</li>
+</ul>
+</div>
+<div class="def"><div class="def-l">Résultat (R)</div><p><strong>R = Produits − Charges = (7) − (6)</strong></p>
+<ul>
+<li>R &gt; 0 → <strong>bénéfice</strong></li>
+<li>R &lt; 0 → <strong>perte</strong></li>
+<li>R = 0 → nul</li>
+</ul></div>
+<div class="def"><div class="def-l">Inventaire</div>
+<ul>
+<li><strong>Inventaire intermittent</strong> : 1 fois par an → compter tt les biens</li>
+<li><strong>Inventaire permanent</strong> : tous les jours, à chaque achat déduction sur stock → pousse ø de rupture de stock. Dresser au moment de clôture (= fin année comptable) → permet de dresser la valeur du patrimoine.</li>
+</ul>
+<p><em>Comptabilité analytique : coûts complets. Optimiser le stock (le stockage coûte).</em></p>
+</div>
+<div class="def"><div class="def-l">Créances / Dettes / Paiement</div>
+<ul>
+<li><strong>Créances</strong> = ressources</li>
+<li><strong>Dettes</strong> = dépenses</li>
+<li><strong>Payer</strong> = décaisser, <strong>vendre</strong> = encaisser</li>
+</ul>
+<p><strong>2 types de paiement :</strong></p>
+<ul>
+<li><strong>Paiement au comptant</strong></li>
+<li><strong>Paiement à crédit</strong> (= acheter / vendre demande confiance) → attendre paiement → <strong>écart / décalage de trésorerie</strong> (35-40j) → besoins de financement → délai d'avoir</li>
+</ul></div>
+<div class="def"><div class="def-l">Image fidèle / Audit</div>
+<p>Compta rôle de l'<strong>audit</strong> → SARRs (par analyse) → contrôle (parties prenantes) → sur plusieurs périodes (notion type) → rendu.</p>
+<p><strong>Image fidèle</strong> : la compta doit donner une image fidèle de l'organisation. Si on se trompe → <strong>contrepassation</strong> (annule les écritures de vérification, on annule les écritures).</p>
+<p><strong>Règle</strong> : « tout ce qui se passe doit être enregistré ».</p>
+</div>
+<div class="co"><span class="co-i">⚠️</span><p><strong>Erreurs / Pièges :</strong> ø de calcul, ou annule par contrepassation si on se trompe. Le compte 5 (banque) doit toujours être positif. Investissement ≠ charges (l'investissement va générer des fruits dans plusieurs périodes, pas dans une seule).</p></div>
+</section><section class="sec" id="m-histoire-marketing">
+<div class="sh"><div class="si" style="background:rgba(255,107,138,.12)">📜</div><h3>Histoire du marketing <span class="new-badge">NOUVEAU — Mana Exo 1</span><span class="badge-verif">À VÉRIFIER : Liminaire / D? — Reorder vague 1</span></h3></div>
+<div class="card">
+<table class="st">
+<thead><tr><th>Période</th><th>Évolution</th><th>Auteur / Concept</th></tr></thead>
+<tbody>
+<tr><td>Avant 1<sup>ère</sup> GM</td><td>1<sup>er</sup> marketing — chaîne de production : 1 type de voiture, 1 besoin → client s'adapte</td><td><strong>Ford</strong> (Fordisme = application du Taylorisme dans l'automobile) ; <strong>Taylor</strong> (Taylorisme : organisation horizontale + verticale)</td></tr>
+<tr><td>Après 2<sup>e</sup> GM (1950)</td><td>Essor des biens d'équipement → nouvelle communication → <strong>communication de masse</strong> (com tt le monde pareil)</td><td>(suite Taylorisme amélioré)</td></tr>
+<tr><td>1970</td><td>Secteur voiture → notion <strong>juste à temps</strong>, approvisionnement, qualité totale</td><td>(transition vers Lean management)</td></tr>
+<tr><td>1980-1990</td><td><strong>Lean management</strong> — reprend concept de masse de qualité totale</td><td><strong>Ohno</strong> (japonais) ; <strong>F. M. Gybart</strong> : com de masse <strong>par type de cible</strong></td></tr>
+<tr><td>1995</td><td><strong>Essor d'internet</strong> → pub individualisé sur un micro marketing → publique restreint (par âge/sexe/métier…) → reste global</td><td></td></tr>
+<tr><td>2010</td><td><strong>Individualité + personnalité → micro marketing</strong> → propose une façon de faire plus adaptée selon les cibles → <strong>la donnée est fondamentale</strong> en marketique → <strong>la data</strong></td><td>Cinéma : pub national + locale (⊕ récemment) → individualité selon les zones</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sep">
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--                        DOSSIER 2                               -->
+<!-- ═══════════════════════════════════════════════════════════════ --></section>
+
+<section class="sec" id="m-histoire-rh">
+<div class="sh"><div class="si" style="background:rgba(108,99,255,.12)">👤</div><h3>Histoire de la fonction RH <span class="new-badge">Liminaire — Reorder vague 2</span></h3></div>
+<div class="card">
+<table class="st">
+<thead><tr><th>Année</th><th>Événement / Étape</th></tr></thead>
+<tbody>
+<tr><td><strong>Avant 1883</strong></td><td>Code civil + livret de l'ouvrier</td></tr>
+<tr><td><strong>1883</strong></td><td>Création d'un livret qui suit l'ouvrier toute sa vie → tt les postes, promo (jusqu'en 1890)</td></tr>
+<tr><td><strong>1880-1900</strong></td><td><strong>Émergence du premier service personnel</strong> → rôle : recruter et affecter les ouvriers / organiser → séparation des rôles → pour gagner du temps, faire grossir l'usine, déléguer tâches ⊖ importantes (recrutement et organisation)</td></tr>
+<tr><td><strong>1906</strong></td><td><strong>Grèves</strong> → usines créent : responsable du recrutement (poste). Fonction : assurer des employeurs publiques / engagés / pour ø éduquer les autres, faire des grèves → de ø recruter (protégé par la loi après). Pdt 1<sup>ère</sup> GM les femmes W ⊖ de poids pour les grèves</td></tr>
+<tr><td><strong>1936</strong></td><td>Arrivée du droit du travail (congés payés, ø enfants…). Entreprises restructurent leur RH (Renault, Peugeot)</td></tr>
+<tr><td><strong>1945</strong></td><td><strong>Fin 2<sup>nde</sup> GM</strong> → pénurie de main d'œuvre → certaines femmes sont restées → difficile à embaucher et fidéliser leurs ouvriers/ouvrières → intérêt à garder ses employeurs → généralisation des postes pour gérer m.o → <strong>création du syndicat</strong> pour gérer les relations employeur/entreprise</td></tr>
+<tr><td><strong>1940-1975</strong></td><td><strong>Reconnaissance de la fonction du personnel</strong> → la direction qui gérait le personnel</td></tr>
+<tr><td><strong>1965 — début années 70</strong></td><td>La fonction personnelle avant l'application pour adhésion entre R et B de l'entreprise → la cherchait ø prod</td></tr>
+<tr><td><strong>1975-1996</strong></td><td>Salarié → prod de masse → création fonction RH (Ressources Humaines) → 2 type → la fonction personnelle s'améliore</td></tr>
+<tr><td><strong>1996</strong></td><td>30 grèves → prod de masse</td></tr>
+<tr><td><strong>Début années 80</strong></td><td>Besoin de personnel formé → 2 côtés : recrutement + besoin de formation, fidéliser → la fonction personnelle → masse de la façon dont la fonction RH apprend les RH → <strong>RH = capital humain</strong></td></tr>
+<tr><td><strong>1992</strong></td><td><strong>Gary Becker (Prix Nobel)</strong> → RH = capital humain. Investissement (compétences/connaissances d'un collab) → formation initiale + formation continue de son parcours pro → s'améliore</td></tr>
+</tbody>
+</table>
+<div class="card" style="margin-top:14px;"><h4>Compléments Mana Exo 2 — Évolution + Crise + Business Partner</h4>
+<p><strong>1830 — Révolution Industrielle (en GB puis FR)</strong> :</p>
+<ul>
+<li>Émergence de bcp de besoin de main d'œuvre du au progrès techno → émergence des usines</li>
+<li>Décuplement des conditions du W des mineurs (entaillé, # gp, # sexe, # âge, # mode du W)</li>
+<li>Lyon : manufacture (= usine) → soyeux (= tissage) → la R vient pas industriel à être employé</li>
+<li>La demande de supervision → assurée par le directeur de l'usine</li>
+<li>« Il faut affilier, retenir les employés »</li>
+</ul>
+<p><strong>Jusqu'en 1860 — Style de direction (Likert)</strong> :</p>
+<ul>
+<li>Style partenaire ⊕ autoritaire</li>
+<li>Dû à la # de productivité (conditions du W ⊖, plein savoir → ⊖ W → ⊖ prod°)</li>
+</ul>
+<p><strong>1880 — Rapport Villermé</strong> :</p>
+<ul>
+<li>↗ aux conditions de W trop mauvaises dont employés tombent malade → ↘ productivité</li>
+<li>La journée réduite à 12h pour être ⊕ productif</li>
+<li>Les RH protègent des intérêts partagés (intérêts pour W mais aussi sous pour les enfants…)</li>
+<li>Ex Michelin : créa des écoles, des… (les RH conviennent les # intérêts)</li>
+</ul>
+<p><strong>Conséquence — fonction RH stratégique :</strong></p>
+<ul>
+<li>L'expertise des collab peut être source de différenciation → nécessaire de les <strong>appréhender comme tel</strong></li>
+<li>La fonction RH est mtn convoquée au mat° de strat° parce qu'elle peut permettre développement, compétences</li>
+<li><strong>RH → GRH (Gestion des Ressources Humaines)</strong> → soustraite parle (Inde…), tâches redondantes sont traitées</li>
+</ul>
+<p><strong>Année 80 — Fonction RH polyvalente</strong> :</p>
+<ul>
+<li>Gestion Retraite, Gestion entrée, Recherche productivité</li>
+<li>Gestion nouveau processus, Gestion Carrière, Gestion mobilité pro, Gestion Arrivage de collab</li>
+<li>Collab origine avantage concurrentielle → recherche de fidélisation</li>
+</ul>
+<p><strong>Début années 2000 — RH Business Partner</strong> :</p>
+<ul>
+<li>La fonction RH devient <strong>Business Partner</strong></li>
+<li>Confronter pénurie de collab. <strong>PK ?</strong> Compétences sont à l'origine de l'avantage concurrentiel + concurrentiel → avancée techno → tu modifies</li>
+<li>« Il est donc nécessaire d'attirer le talent et le <strong>conserver = fidélisation</strong> »</li>
+</ul>
+<div class="def" style="margin-top:10px;"><div class="def-l">Rôles de la RH (Business Partner)</div>
+<ol>
+<li><strong>Recrutement</strong> (trouver les talents) — sachant qu'on a # les profils ; ø il peut manager comportement de ans → série d'outils pour la mobilité pour rester dans l'organisation</li>
+<li><strong>Diversité</strong> (handicap, sexe, valeurs, origine…) — fond° RH transforme pour répondre à # les attentes pour proposer à l'entreprise des RH ou éducation avec ses attentes et qui restent dans l'entreprise</li>
+</ol>
+<p><strong>Aujourd'hui</strong> : les RH accompagnent le changement, anticipent les changements des emplois, font évoluer la VA des collab, mesurent et doivent également être pilote du changement.</p>
+<p><strong>Conclusion : Business Partner → recruter, former, coacher.</strong></p>
+</div>
+<div class="def"><div class="def-l">Citation Henry Ford (RH)</div>
+<p><em>« Se réunir est un début, rester ensemble est un progrès, travailler ensemble est la réussite. »</em> → la vraie réussite c'est <strong>le collaborateur</strong> !</p>
+<p>Hors cours : <strong>Progrès technique = ⊕ machine (capital) ⊕ compétence (travail)</strong>. Progrès technique = ⊕ si productivité à la période 1 &gt; 0. <strong>Limite humaine au progrès → ↗ de la productivité.</strong></p>
+</div>
+<div class="def"><div class="def-l">Évolution synthèse fonction RH</div>
+<ol>
+<li>Gérer des personnes (l'on monde personnel)</li>
+<li>Le personnel peut-être suite (RH) comme partenaire → conduite des changements et pilotage RH</li>
+<li>→ <strong>RH partenaire stratégique</strong> : collab important dans l'organisation</li>
+</ol>
+<p><strong>Côté stratégique de la fonction RH</strong> = les compétences sont source d'avantage concurrentiel.</p>
+</div>
+<div class="aut"><div class="aut-l">Likert</div><p><strong>4 styles de direction</strong> (jusqu'en 1860) : autoritaire / partenaire (paternaliste) / consultatif / participatif. Lien direct avec productivité.</p></div>
+<div class="aut"><div class="aut-l">Villermé (1880)</div><p><strong>Rapport Villermé</strong> : conditions de W trop mauvaises → productivité ↘. Journée réduite à 12h pour être plus productif. Lance la prise de conscience sociale.</p></div>
+</div>
+</div></section>
+
+</div><!-- /content -->
+
+</div><!-- /layout -->
+</main>
+
+<footer>
+  <div class="wrap">
+    <code>Fiche_MSG.html · v18 fusionnée · MSG ECT1 · Mme Soler</code>
+    <span>73 sections · 37 méthodes bX intégrées · 91 auteurs · verbatim strict</span>
+  </div>
+</footer>
+
+</body>
+</html>
